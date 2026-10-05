@@ -36,5 +36,5 @@ python tools/check_submission.py paper/main.tex # manuscript self-check
 - Title: Head first, features later: a transient window of classifier-head de-specialization ...
 - Authors: Xianzhe Liu (Hunan University)
 - License: <choose an OSI license, e.g. MIT / Apache-2.0>
-- DOI: <fill after Zenodo/OSF deposit, then cite it in the manuscript's Data availability statement>
+- DOI:10.5281/zenodo.23157275
 - Version / date: 2026-10-05
