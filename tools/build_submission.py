@@ -246,9 +246,11 @@ pdflatex main.tex          # 两遍以解析交叉引用
 5. 投稿时一并上传：`main.tex`、`figures/`（11 个 PDF）、`highlights.txt`、
    `cover_letter.md`、`references.bib`（可选）、declarations(.docx)
 
-已完成：**Zenodo DOI 10.5281/zenodo.23157275（v2.0，concept DOI
+已完成：**Zenodo DOI 10.5281/zenodo.23162540（v2.1，concept DOI
 10.5281/zenodo.23157274）已写入 Data availability 并作为 `[software]` 参考文献
 （`xliu2026c1release`）**；GitHub 仓库 https://github.com/python123flask/C1-head-feature-window
+⚠️ 待修：v2.1 记录的 creators 被 Zenodo 从 GitHub 资料抓成 `Spica`，需在
+Zenodo 编辑为 `Liu, Xianzhe`（改 metadata 不改 DOI）
 
 
 ## 可复现性材料（代码库内，非投稿包）
