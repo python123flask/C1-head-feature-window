@@ -1,0 +1,14 @@
+blocks=['P16-width'] shard=0/1 to_run=12 skipped_done=0 workers=1
+[1/12] P16_w0.5_L250_s42 succeeded (47s elapsed)
+[2/12] P16_w0.5_L250_s123 succeeded (92s elapsed)
+[3/12] P16_w0.5_L250_s456 succeeded (137s elapsed)
+[4/12] P16_w0.5_L4000_s42 succeeded (202s elapsed)
+[5/12] P16_w0.5_L4000_s123 succeeded (265s elapsed)
+[6/12] P16_w0.5_L4000_s456 succeeded (327s elapsed)
+[7/12] P16_w2_L250_s42 succeeded (441s elapsed)
+[8/12] P16_w2_L250_s123 succeeded (554s elapsed)
+[9/12] P16_w2_L250_s456 succeeded (668s elapsed)
+[10/12] P16_w2_L4000_s42 succeeded (843s elapsed)
+[11/12] P16_w2_L4000_s123 succeeded (1020s elapsed)
+[12/12] P16_w2_L4000_s456 succeeded (1170s elapsed)
+done: ok=12 fail=0 blocked=0 wall=1170s

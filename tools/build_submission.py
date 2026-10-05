@@ -53,21 +53,27 @@ label-scarce transition.
 
 2. **Practical, quantitative guidance.** Read as budget-limited adaptation,
    every exposure beats none for every budget from 50 to 2000 steps (5/5
-   seeds), by up to +11.5 accuracy points at a 50-step budget, and an interior
-   optimum in exposure length appears on the pre-registered adaptation-speed
+   seeds), by up to +11.5 accuracy points at a 50-step budget; in
+   time-to-accuracy terms, reaching 0.65 accuracy takes 32% fewer optimizer
+   steps (360 -> 245, 5/5 seeds). An interior optimum in exposure length
+   appears on the pre-registered adaptation-speed
    readout. A stopping rule follows directly: switch when the head stops
    reading the old task and before the feature probe begins to fall - a signal
    current-task accuracy cannot provide.
 
 3. **Unusually strong evidence practice.** The study was pre-registered with
    four frozen decision gates and a frozen claim ceiling; every protocol
-   deviation is logged with its calibration evidence. We report 207 runs over
-   five datasets (CIFAR-10/100, SVHN, Fashion-MNIST, UCI gas-sensor drift),
-   three architectures, a five-point target-entropy dose-response, a causal
-   cross-transplant of heads and features, five controls (including a
-   last-layer-reset baseline), and a deterministic-kernel replication whose
+   deviation is logged with its calibration evidence. We report 189
+   confirmatory runs (231 runs executed in total) over five datasets
+   (CIFAR-10/100, SVHN, Fashion-MNIST, UCI gas-sensor drift), and three
+   architectures, a five-point target-entropy dose-response, a causal
+   cross-transplant of heads and features -- replicated on a deterministic
+   platform where process-level rerun noise is zero by construction -- five
+   controls (including a
+   last-layer-reset baseline), a width-sensitivity sweep, and a
+   deterministic-kernel replication whose
    identical-configuration reruns are bitwise identical (zero process-level
-   noise). Code, raw per-evaluation metrics, checkpoints and the analysis
+   noise). Code, raw per-evaluation metrics and the analysis
    pipeline are released.
 
 4. **Honest negative results.** Under deterministic kernels the endpoint
@@ -173,7 +179,7 @@ def main():
 ## 为什么工作区有多个 .tex，而投稿包只有一个？
 工作区是**数据驱动流水线**，分开写是为了杜绝手抄数字：
 - `paper/results_macros.tex` —— {macro_n} 个数值宏，由 `analysis/paper_macros.py`
-  从 207 个 run 的原始 `metrics.jsonl` 自动生成；
+  从 231 个 run 的原始 `metrics.jsonl` 自动生成；
 - `analysis/tables/tab_*.tex` —— 10 张表，由 `analysis/make_tables.py` 自动生成；
 - `paper/main.tex` —— 正文，通过 `\\input` 引用上面两者。
 
@@ -221,7 +227,7 @@ pdflatex main.tex          # 两遍以解析交叉引用
 | **声明：生成式 AI 使用（置于参考文献之前的新节）** | ✅ 已**填写完毕**：工具=DeepSeek（DeepSeek Harness），用途=起草/修订文稿与实现调试实验分析绘图代码；并声明结果由代码产出、图由脚本渲染、文献元数据经 arXiv/ACL Anthology/OpenAlex 核对、作者对内容负全责 |
 | **Data statement（Option C：入库并引用，或说明原因）** | ✅ 已说明第三方数据以 [dataset] 引用 + 代码/指标将入库并给出 PID |
 | CRediT 作者贡献（指南：corresponding authors **are required**） | ✅ 已按**单作者**填好（Xianzhe Liu: Conceptualization… Writing – review and editing）；**若实际有合著者，必须改成每人的真实角色** |
-| 参考文献：正文与列表一一对应、须为真实来源、尽量给 DOI | ✅ 自检 32/32 双向一致；未能核实的 DOI 已标注待核（`gasdrift`） |
+| 参考文献：正文与列表一一对应、须为真实来源、尽量给 DOI | ✅ 自检 {n_ref}/{n_ref} 双向一致；全部 DOI/arXiv 标识符已对 Crossref / DataCite / OpenAlex / arXiv / ACL Anthology 核验（含 `gasdrift`=10.24432/C5RP6W、软件自引 Zenodo DOI 10.5281/zenodo.23157275） |
 | 参考文献编号按出现顺序（录用后由期刊重排） | ⚠️ 当前按条目顺序编号；指南注明录用后统一重排，投稿阶段"格式一致即可" |
 | 数据引用标注 `[dataset]` | ✅ CIFAR/SVHN/Fashion-MNIST/UCI Gas 四条 |
 | Vitae：每位作者 ≤100 词简介 + 照片（单独文件） | ⚠️ **需作者自备**，未包含在本包 |
@@ -235,14 +241,18 @@ pdflatex main.tex          # 两遍以解析交叉引用
 > 如期刊/个人偏好改 "I"，可全局替换（指南无此项要求）。
 1. **如实际有合著者**才需要：`\\author`/`\\affiliation` 加行，CRediT 改成每人真实角色
 2. 竞争利益：在投稿系统的 declarations 工具生成 .docx 并上传（正文声明已写好）
-3. `gasdrift` 的 DOI 按 UCI 落地页核对（或删除 DOI）
-4. 按需准备 Vitae（≤100 词 + 照片）
-5. 自己跑 `pdflatex main.tex` 两遍确认编译（我按要求未编译；结构级检查已全过）
-6. 投稿时一并上传：`main.tex`、`figures/`（11 个 PDF）、`highlights.txt`、
+3. 按需准备 Vitae（≤100 词 + 照片）
+4. 自己跑 `pdflatex main.tex` 两遍确认编译（我按要求未编译；结构级检查已全过）
+5. 投稿时一并上传：`main.tex`、`figures/`（11 个 PDF）、`highlights.txt`、
    `cover_letter.md`、`references.bib`（可选）、declarations(.docx)
 
+已完成：**Zenodo DOI 10.5281/zenodo.23157275（v2.0，concept DOI
+10.5281/zenodo.23157274）已写入 Data availability 并作为 `[software]` 参考文献
+（`xliu2026c1release`）**；GitHub 仓库 https://github.com/python123flask/C1-head-feature-window
+
+
 ## 可复现性材料（代码库内，非投稿包）
-- `results/runs/<run_id>/metrics.jsonl`：207 runs 逐点原始读数
+- `results/runs/<run_id>/metrics.jsonl`：231 runs 逐点原始读数
 - `analysis/decision_gate.py` → `analysis/GATE.json`：门判定（advance）
 - `pilot/PLAN.md`、`pilot/DEVIATIONS.md`、`pilot/CODE_REVIEW.md`：预注册/偏离/评审留痕
 - 生成脚本：`analysis/visualization.py`、`make_tables.py`、`paper_macros.py`

@@ -299,6 +299,97 @@ def main():
             add(f"DAccReset{tag}", f"{statistics.mean(d_acc):+.4f}")
             add(f"DNllReset{tag}", f"{statistics.mean(d_nll):+.4f}")
 
+    # run 分账（供摘要/资源节统一口径，避免 190/189/207 三个数各说各话）
+    import glob as _glob
+    import json as _json
+    import re as _re
+    summaries = _glob.glob("results/runs/*/summary.json")
+    n_exec = len(summaries)
+    n_calib = 0
+    n_p14 = 0
+    for p in summaries:
+        b = _json.load(open(p, encoding="utf-8")).get("block", "")
+        if b.startswith("S-"):
+            n_calib += 1
+        elif _re.match(r"^P([1-9]|1[0-4])-", b):   # 仅 P1–P14 = 预注册确证集（不含 P0 计时）
+            n_p14 += 1
+    add("NumExecuted", str(n_exec))
+    add("NumCalibration", str(n_calib))
+    add("NumConfirmatory", str(n_p14))
+    add("NumExtended", str(sum(1 for p in summaries
+                               if (_json.load(open(p, encoding="utf-8"))
+                                   .get("block", "") or "").startswith(("P15", "P16")))))
+
+    # ---- P15 确定性移植（档B）：2×2 因子，源 run 与移植 run 均在确定性平台上
+    def _cell(seed, which):
+        rid = {"HsFs": f"P15_detsrc_L250_s{seed}",
+               "HlFl": f"P15_detsrc_L4000_s{seed}",
+               "HsFl": f"P15_detHeadShort_featLong_s{seed}",
+               "HlFs": f"P15_detHeadLong_featShort_s{seed}"}[which]
+        if not L.finished_ok(rid):
+            return None
+        term = L.final_c(rid)
+        a, n = term.get("new_task_acc"), term.get("new_task_NLL")
+        return None if a is None or n is None else {"acc": a, "nll": n}
+
+    det_head_nll, det_feat_nll, det_head_acc, det_feat_acc = [], [], [], []
+    for s in SEEDS5:
+        v = {c: _cell(s, c) for c in ("HsFs", "HsFl", "HlFs", "HlFl")}
+        if any(x is None for x in v.values()):
+            continue
+        h = 0.5 * (v["HsFs"]["nll"] + v["HsFl"]["nll"]) - 0.5 * (v["HlFs"]["nll"] + v["HlFl"]["nll"])
+        f = 0.5 * (v["HsFl"]["nll"] + v["HlFl"]["nll"]) - 0.5 * (v["HsFs"]["nll"] + v["HlFs"]["nll"])
+        ha = 0.5 * (v["HsFs"]["acc"] + v["HsFl"]["acc"]) - 0.5 * (v["HlFs"]["acc"] + v["HlFl"]["acc"])
+        fa = 0.5 * (v["HsFl"]["acc"] + v["HlFl"]["acc"]) - 0.5 * (v["HsFs"]["acc"] + v["HlFs"]["acc"])
+        det_head_nll.append(h)
+        det_feat_nll.append(f)
+        det_head_acc.append(ha)
+        det_feat_acc.append(fa)
+    if det_feat_nll:
+        add("DetTFeatEff", f"{statistics.mean(det_feat_nll):+.4f}")
+        add("DetTFeatSd", f"{statistics.pstdev(det_feat_nll):.4f}")
+        add("DetTFeatNeg", f"{sum(1 for x in det_feat_nll if x < 0)}/{len(det_feat_nll)}")
+        add("DetTHeadEff", f"{statistics.mean(det_head_nll):+.4f}")
+        add("DetTHeadSd", f"{statistics.pstdev(det_head_nll):.4f}")
+        _sd_f = statistics.pstdev(det_feat_nll)
+        _sd_h = statistics.pstdev(det_head_nll)
+        add("DetTFeatD", f"{abs(statistics.mean(det_feat_nll) / _sd_f):.1f}" if _sd_f else "0")
+        add("DetTHeadD", f"{abs(statistics.mean(det_head_nll) / _sd_h):.2f}" if _sd_h else "0")
+        add("DetTHeadEffAcc", f"{statistics.mean(det_head_acc):+.4f}")
+        add("DetTFeatEffAcc", f"{statistics.mean(det_feat_acc):+.4f}")
+        add("DetTN", str(len(det_feat_nll)))
+
+    # ---- P16 宽度敏感性（档C）：probe 损伤随特征图宽度变化
+    for tag, wm in (("WHalf", 0.5), ("WTwo", 2.0)):
+        drops, a2s = [], []
+        for s in (42, 123, 456):
+            r1 = f"P16_w{wm:g}_L250_s{s}"
+            r2 = f"P16_w{wm:g}_L4000_s{s}"
+            if not (L.finished_ok(r1) and L.finished_ok(r2)):
+                continue
+            p1, p2 = L.end_b(r1).get("acc_old_probe"), L.end_b(r2).get("acc_old_probe")
+            if p1 is None or p2 is None:
+                continue
+            drops.append(p1 - p2)
+            a2s.append(any(x.get("acc_old_cur", 1) <= 0.5 and x.get("acc_old_probe", 0) >= 0.7
+                           for x in L.phase_rows(r1, "B")))
+        if drops:
+            add(f"ProbeDrop{tag}", m(drops))
+            add(f"A2{tag}", f"{sum(a2s)}/{len(a2s)}")
+
+    # width0.5 的头释放时点（A2 在 L=250 不满足的原因：释放被推迟）
+    cross = []
+    for s in (42, 123, 456):
+        rid = f"P16_w0.5_L4000_s{s}"
+        if L.finished_ok(rid):
+            h = [r["phase_step"] for r in L.phase_rows(rid, "B")
+                 if r.get("acc_old_cur", 1) <= 0.5]
+            if h:
+                cross.append(min(h))
+    if cross:
+        add("WHalfCrossMin", str(min(cross)))
+        add("WHalfCrossMax", str(max(cross)))
+
     # 资源（全部正式块：P0–P10）
     walls, rss, gpu = [], [], []
     for r in L.grid_runs():

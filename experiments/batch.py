@@ -31,7 +31,8 @@ BATCH_LOG = LOGS / "batch.log"
 BLOCK_ORDER = ["S-exposure", "S-exposure2", "S-calib", "S-calib2", "S-smoke", "P0-timing",
                "P1-main", "P2-controls", "P3-fixedC", "P4-intervention", "P5-diagnostics",
                "P7-dose", "P6-sensor", "P8-resnet", "P9-eps", "P10-det",
-               "P11-c100", "P12-fmnist", "P13-detseed", "P14-headreset"]
+               "P11-c100", "P12-fmnist", "P13-detseed", "P14-headreset",
+               "P15-detsrc", "P15-dettransplant", "P16-width"]
 
 SEEDS5 = [42, 123, 456, 789, 1024]
 SEEDS4 = [42, 123, 456, 789]
@@ -220,6 +221,38 @@ def build_grid() -> dict:
         runs.append(cfg(run_id=f"P14_headreset_s{s}", block="P14-headreset",
                         mode="main", shared="high", L=0, seed=s,
                         reinit_head_after_A=True))
+
+    # ---- P15-detsrc：确定性平台的原生短/长暴露源（保存 end_B 供移植；过程噪声=0）
+    #      3 seeds（D21 预算修订：确定性核关 TF32 后单步成本高，且需保持单进程串行以
+    #      保证交互响应）
+    for s in SEEDS3:
+        for Lv in (250, 4000):
+            runs.append(cfg(run_id=f"P15_detsrc_L{Lv}_s{s}", block="P15-detsrc",
+                            mode="main", shared="high", L=Lv, seed=s,
+                            deterministic=True, save_ckpt=True))
+
+    # ---- P15-dettransplant：确定性平台上的交叉移植（回应"效应在噪声边缘"）
+    for s in SEEDS3:
+        short = str(RUNS / f"P15_detsrc_L250_s{s}" / "checkpoints" / "end_B.npz")
+        long_ = str(RUNS / f"P15_detsrc_L4000_s{s}" / "checkpoints" / "end_B.npz")
+        runs.append(cfg(run_id=f"P15_detHeadShort_featLong_s{s}",
+                        block="P15-dettransplant", mode="transplant", shared="high",
+                        L=1000, seed=s, deterministic=True,
+                        head_from_ckpt=short, feat_from_ckpt=long_,
+                        requires=[short, long_]))
+        runs.append(cfg(run_id=f"P15_detHeadLong_featShort_s{s}",
+                        block="P15-dettransplant", mode="transplant", shared="high",
+                        L=1000, seed=s, deterministic=True,
+                        head_from_ckpt=long_, feat_from_ckpt=short,
+                        requires=[short, long_]))
+
+    # ---- P16-width：SmallCNN 宽度敏感性（档 C：损伤幅度是否随特征图冗余度变化）
+    for wm in (0.5, 2.0):
+        for Lv in (250, 4000):
+            for s in SEEDS3:
+                runs.append(cfg(run_id=f"P16_w{wm:g}_L{Lv}_s{s}",
+                                block="P16-width", mode="main", shared="high",
+                                L=Lv, seed=s, width_mult=wm))
 
     ids = [r["run_id"] for r in runs]
     assert len(ids) == len(set(ids)), "duplicate run_id"

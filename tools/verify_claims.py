@@ -15,6 +15,9 @@ import load as L  # noqa: E402
 
 TEX_PATH = Path(__file__).resolve().parents[1] / "paper" / "main.tex"
 TEX = TEX_PATH.read_text(encoding="utf-8")
+_MF = TEX_PATH.parent / "results_macros.tex"
+MACRO_TXT = _MF.read_text(encoding="utf-8") if _MF.exists() else ""
+ALLTEXT = TEX + MACRO_TXT          # 断言可同时匹配正文与宏定义
 issues: list = []
 oks: list = []
 
@@ -157,6 +160,101 @@ def main():
             oks.append(f"理论 1/η: lr={lr} head/probe 首现 {got} ✓")
         else:
             issues.append(f"理论 1/η: lr={lr} 实际 {got} ≠ 文中 ({he}, {pe})")
+
+    # ---------- 新增：time-to-accuracy（论文中的 "Why speed rather than endpoint" 段）
+    def tta(run_id, thr):
+        c = [r for r in L.phase_rows(run_id, "C")
+             if r.get("new_task_acc") is not None and r["new_task_acc"] >= thr]
+        return min((r["phase_step"] for r in c), default=None)
+
+    import statistics as _st
+    def mean_tta(rids, thr):
+        v = [tta(r, thr) for r in rids if L.finished_ok(r)]
+        v = [x for x in v if x is not None]
+        return _st.mean(v) if v else None
+
+    L0 = [f"P1_main_high_L0_s{s}" for s in (42, 123, 456, 789, 1024)]
+    L250 = [f"P1_main_high_L250_s{s}" for s in (42, 123, 456, 789, 1024)]
+    RST = [f"P14_headreset_s{s}" for s in (42, 123, 456, 789, 1024)]
+    for name, got, needle in (
+        ("TTA L0 @0.65", mean_tta(L0, 0.65), "$360$ optimizer steps"),
+        ("TTA L250 @0.65", mean_tta(L250, 0.65), "$245$ after"),
+        ("TTA L0 @0.68", mean_tta(L0, 0.68), "$610\\to445$"),
+        ("TTA reset @0.65", mean_tta(RST, 0.65), "in $145$ steps"),
+    ):
+        if needle in TEX:
+            oks.append(f"{name} = {got}  (文中 {needle!r})")
+        else:
+            issues.append(f"{name}：文中找不到 {needle!r}（实算 {got}）")
+    g65 = [a - b for a, b in zip((tta(x, 0.65) for x in L0),
+                                 (tta(x, 0.65) for x in L250))
+           if a is not None and b is not None]
+    if g65 and _st.mean(g65) == 115 and all(x > 0 for x in g65) and "$-32\\%$" in TEX:
+        oks.append("TTA paired gain @0.65 = +115 steps (5/5) 且文中写 -32%")
+    else:
+        issues.append(f"TTA 配对增益异常: mean={_st.mean(g65) if g65 else None}, "
+                      f"all_pos={all(x > 0 for x in g65) if g65 else None}")
+
+    # ---------- 新增：P15 确定性移植（档B）与 P16 宽度（档C）
+    def _cell(seed, which):
+        rid = {"HsFs": f"P15_detsrc_L250_s{seed}",
+               "HlFl": f"P15_detsrc_L4000_s{seed}",
+               "HsFl": f"P15_detHeadShort_featLong_s{seed}",
+               "HlFs": f"P15_detHeadLong_featShort_s{seed}"}[which]
+        if not L.finished_ok(rid):
+            return None
+        t = L.final_c(rid)
+        return None if t.get("new_task_NLL") is None else t["new_task_NLL"]
+
+    feats = []
+    for s in (42, 123, 456):
+        v = {c: _cell(s, c) for c in ("HsFs", "HsFl", "HlFs", "HlFl")}
+        if any(x is None for x in v.values()):
+            continue
+        feats.append(0.5 * (v["HsFl"] + v["HlFl"]) - 0.5 * (v["HsFs"] + v["HlFs"]))
+    if feats:
+        mu, sd_ = statistics.mean(feats), statistics.pstdev(feats)
+        if f"{mu:+.4f}" == "-0.0335" and all(x < 0 for x in feats) \
+                and "\\DetTFeatEff}{-0.0335}" in ALLTEXT:
+            oks.append(f"P15 det transplant feat effect = {mu:+.4f} (3/3 negative), macro consistent")
+        else:
+            issues.append(f"P15 det transplant: computed {mu:+.4f} sd={sd_:.4f} "
+                          f"signs={[x < 0 for x in feats]}，与文中宏不符")
+    else:
+        issues.append("P15 det transplant: no complete seeds")
+
+    drops_w = {}
+    for tag, wm in (("WHalf", 0.5), ("WTwo", 2.0)):
+        d = []
+        for s in (42, 123, 456):
+            r1, r2 = f"P16_w{wm:g}_L250_s{s}", f"P16_w{wm:g}_L4000_s{s}"
+            if not (L.finished_ok(r1) and L.finished_ok(r2)):
+                continue
+            p1, p2 = L.end_b(r1).get("acc_old_probe"), L.end_b(r2).get("acc_old_probe")
+            if p1 is not None and p2 is not None:
+                d.append(p1 - p2)
+        if d:
+            drops_w[tag] = statistics.mean(d)
+    if drops_w and f"\\ProbeDropWHalf}}{{{drops_w.get('WHalf', 0):.3f}}}" in ALLTEXT \
+            and f"\\ProbeDropWTwo}}{{{drops_w.get('WTwo', 0):.3f}}}" in ALLTEXT \
+            and drops_w.get("WHalf", 0) > 0.126 > drops_w.get("WTwo", 0):
+        oks.append(f"P16 width drops: x0.5={drops_w.get('WHalf'):.3f}, "
+                   f"x2={drops_w.get('WTwo'):.3f}, monotone across baseline 0.126")
+    else:
+        issues.append(f"P16 width drops inconsistent with text: {drops_w}")
+
+    # run 分账必须自洽：189 + 1 + 17 + 24 = 231
+    for name, needle in (("NumConfirmatory", "\\NumConfirmatory}{189}"),
+                         ("NumExecuted", "\\NumExecuted}{231}")):
+        if needle in TEX or needle.replace("}{", "=") in TEX:
+            oks.append(f"{name} 宏 = {needle}")
+        else:
+            # 结果宏在 results_macros.tex 中（源文件路径）
+            mf2 = TEX_PATH.parent / "results_macros.tex"
+            if mf2.exists() and needle in mf2.read_text(encoding="utf-8"):
+                oks.append(f"{name} 宏 = {needle} (in results_macros)")
+            else:
+                issues.append(f"{name} 不是 {needle}")
 
     # ---------- 架构参数量
     sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "experiments" / "pilot"))

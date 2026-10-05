@@ -1,0 +1,107 @@
+{
+  "run_id": "P15_detHeadShort_featLong_s456",
+  "block": "P15-dettransplant",
+  "mode": "transplant",
+  "seed": 456,
+  "L": 1000,
+  "shared": "high",
+  "status": "succeeded",
+  "params": {
+    "features": 93248,
+    "head": 20490,
+    "total": 113738
+  },
+  "tasks": {
+    "old": {
+      "name": "cifar10_old",
+      "kind": "image",
+      "n_train": 5000,
+      "n_test": 2500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 10,
+      "train_per_class": [
+        1000,
+        1000,
+        0,
+        0,
+        0,
+        0,
+        1000,
+        0,
+        1000,
+        1000
+      ],
+      "test_per_class": [
+        500,
+        500,
+        0,
+        0,
+        0,
+        0,
+        500,
+        0,
+        500,
+        500
+      ]
+    },
+    "new": {
+      "name": "cifar10_new",
+      "kind": "image",
+      "n_train": 5000,
+      "n_test": 2500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 10,
+      "train_per_class": [
+        1000,
+        1000,
+        1000,
+        1000,
+        1000
+      ],
+      "test_per_class": [
+        500,
+        500,
+        500,
+        500,
+        500
+      ]
+    }
+  },
+  "transplant": {
+    "head_from": "C:\\Users\\lenovo\\Desktop\\project\\results\\runs\\P15_detsrc_L250_s456\\checkpoints\\end_B.npz",
+    "feat_from": "C:\\Users\\lenovo\\Desktop\\project\\results\\runs\\P15_detsrc_L4000_s456\\checkpoints\\end_B.npz"
+  },
+  "loss_C": 0.6757081369012594,
+  "freeze_features_C": false,
+  "final": {
+    "n_points": 80,
+    "acc_old_cur": 0.16839998960494995,
+    "acc_old_probe": 0.77783203125,
+    "new_task_acc": 0.7283999919891357,
+    "new_task_NLL": 0.8127304315567017,
+    "W2_norm": 7.320361614227295,
+    "end_C_new_task_acc": 0.7283999919891357,
+    "end_C_new_task_NLL": 0.8127304315567017,
+    "end_C_acc_new_probe": 0.6396484375,
+    "end_C_acc_old_probe": 0.77783203125
+  },
+  "error": null,
+  "wall_s": 25.34,
+  "rss_peak_mb": 2004.2,
+  "gpu_peak_mb": 763.7,
+  "device": "cuda"
+}

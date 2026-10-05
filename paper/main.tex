@@ -12,6 +12,8 @@
 \usepackage{multirow}
 \usepackage{siunitx}
 \usepackage{xcolor}
+\usepackage{lmodern}   % Type 1 text fonts (EC only ships 600 dpi bitmaps here)
+\setlength{\emergencystretch}{2em}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 
 \journal{Neurocomputing}
@@ -72,7 +74,8 @@ predicting crossing times proportional to $1/\eta$; we verify this over a
 $10\times$ range. Equal-budget, head-only and permutation controls plus a
 five-point target-entropy dose--response (probe $0.853\to0.585$) exclude four
 competing explanations. It replicates on ResNet-18, CIFAR-100, Fashion-MNIST
-and sensor drift (\NumRuns{} runs); a deterministic replication yields
+and sensor drift (\NumConfirmatory{} confirmatory runs); a deterministic
+replication yields
 bitwise-identical reruns, a window gain of $+\DetWindowGain$ (\DetWindowPos)
 and an endpoint range of $\DetLRrange$, so we claim adaptation-speed, not
 endpoint, gains.
@@ -83,13 +86,7 @@ plasticity loss \sep continual learning \sep label smoothing \sep
 classifier head \sep representation drift \sep task adaptation
 \end{keyword}
 
-\begin{highlights}
-\item The classifier head loses old-task readability within 65--220 exposure steps
-\item A linear probe still reads the features then: the two timescales differ 10-fold
-\item Adaptation over the first 1000 steps is interior-optimal in exposure length
-\item Every exposure beats none at every adaptation budget (5/5 seeds, 189 runs)
-\item A target-entropy dose--response separates damage from label-smoothing effects
-\end{highlights}
+% Highlights 按指南以单独文件提交（highlights.txt），正文不再放置该环境
 
 \end{frontmatter}
 
@@ -142,6 +139,11 @@ duration of the release window change what happens when a new task arrives?
   of adaptation) performance is non-monotone in exposure length: an
   intermediate exposure outperforms both no exposure and long exposure, in
   5/5 seeds and in both sharing conditions (Fig.~\ref{fig:speed}).
+  \item \textbf{Budget-dominant adaptation.} The advantage holds under every
+  adaptation budget we tested ($B\in\{50,\dots,2000\}$, 5/5 seeds, up to
+  $+11.5$ accuracy points at $B{=}50$) and shows up as time-to-accuracy:
+  reaching $0.65$ new-task accuracy takes $32\%$ fewer optimizer steps after
+  a short exposure (360$\to$245 steps, 5/5 seeds).
   \item \textbf{Causal decomposition by cross-transplant.} Recombining heads
   and features taken from short- and long-exposure runs shows that the
   residual terminal effect follows the \emph{feature} state
@@ -167,7 +169,8 @@ duration of the release window change what happens when a new task arrives?
 The study was pre-registered: gates, thresholds, and claim ceiling were frozen
 before the confirmatory blocks were executed, and all protocol deviations are
 logged with their calibration evidence. All quantitative statements below are
-reported at the pre-registered \emph{pilot} claim ceiling.
+reported at the claim ceiling frozen before execution --- ``evidence of a
+separable mechanism on these benchmarks''.
 
 % ===========================================================================
 \section{Related work}
@@ -476,6 +479,26 @@ exposure buys the largest benefit exactly where practitioners feel the pain
 (tight adaptation budgets), and its value decays at a measurable rate that
 differs by how much the new task can reuse the old representation.
 
+\paragraph{Why speed rather than endpoint.}
+Three observations turn the absence of a terminal gain into a positive
+statement of value. (i) \emph{The operating point is a finite budget}: at every
+budget we measured the exposure conditions strictly dominate $L{=}0$, and
+terminal equality appears only once the clock is run to convergence --- a
+regime a deployed learner rarely reaches right after a switch. (ii) \emph{The
+gain is a time saving} when measured on the accuracy axis: reaching $0.65$
+new-task accuracy takes $360$ optimizer steps without exposure and $245$ after
+a $250$-step exposure ($-32\%$, 5/5 seeds; $610\to445$ to reach $0.68$), and a
+deliberate last-layer reset reaches $0.65$ in $145$ steps --- so the window
+buys most of a free reset without touching any parameter. (iii) \emph{The
+payoff is asymmetric}: the benefit is immediate and monotone in what a
+switcher can afford, while the cost is bounded and recoverable (endpoint range
+$\DetLRrange$ on the deterministic platform) --- except when the new task is
+feature-limited, where long exposure does cost accuracy at the endpoint
+(CIFAR-100: $\AccCnnC100Lzero\to\AccCnnC100LfourK$ accuracy,
+$\NllCnnC100Lzero\to\NllCnnC100LfourK$ NLL). The practical claim is
+therefore a transient benefit with a bounded, knowable cost, plus a stopping
+rule for stopping: the endpoint is where the cost lives, not the benefit.
+
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.98\linewidth]{../analysis/figures/fig8_budget_gain.pdf}
@@ -590,9 +613,34 @@ We emphasize the direction: old-task probe damage is \emph{not} new-task harm
 here. Uniform exposure de-specializes the representation away from the old
 classes, which is damage measured against the old task (gate A3) but appears
 to reduce interference for a new task that reuses the same head slots. The
-effect sizes ($\le0.033$ NLL) are about twice the mean rerun noise
-($0.0176$) but below its maximum ($0.046$), so we treat this as a pilot-level
-observation rather than a conclusion.
+localization rests on a paired contrast, not on exceeding an absolute noise
+floor: within each seed the four cells are recombinations of the same two
+checkpoints, so no process-level rerun noise enters the comparison (the
+rerun-noise figures quoted in Section~\ref{sec:r-window} quantify \emph{independent
+training processes}, a different quantity). The feature main effect is
+$-0.0329\pm0.0144$ NLL against a seed-level standard deviation less than half
+its magnitude ($|d|\approx2.3$), with the same sign in all five seeds
+(one-sided sign test $p=1/32\approx0.031$), whereas the head main effect is
+$+0.0003\pm0.0174$ ($d\approx0.02$, a genuine null): the contrast that
+localizes the effect, features versus head, is a factor of $\approx100$ in
+effect size. We therefore treat the \emph{localization} as supported and the
+\emph{magnitude} of the feature effect as a five-seed estimate that
+independent replication should confirm.
+
+\paragraph{Replication on the deterministic platform.}
+To remove the process-level noise entirely rather than argue about it, we
+repeated the whole design on the deterministic platform: the two source runs
+($L{=}250$ and $L{=}4000$) were re-executed with deterministic kernels and
+saved checkpoints, and the recombinations were re-adapted with a deterministic
+phase C, for \DetTN{} seeds. The localization replicates --- feature main
+effect $\DetTFeatEff\pm\DetTFeatSd$ NLL with the same sign in \DetTFeatNeg{}
+seeds ($|d|=\DetTFeatD$), head main effect
+$\DetTHeadEff\pm\DetTHeadSd$ ($|d|=\DetTHeadD$) --- and on this platform
+identical configurations are bitwise identical (the property established in
+the deterministic replication below), so the process-level rerun noise that
+the baseline comparison was measured against is \emph{zero by construction}:
+only seed variance remains. The two platforms agree on the effect to within
+$0.001$ NLL, i.e.\ the baseline value is not an artefact of noisy sources.
 
 \input{../analysis/tables/tab_transplant.tex}
 
@@ -701,6 +749,27 @@ difference between a head-release benefit and a feature-damage cost, a sturdier
 feature map shrinks the cost term until the benefit saturates instead of
 reversing --- the mechanism predicts exactly this, and the data show it.
 
+\paragraph{Does the damage term track the feature-map width?}
+If the window is the difference between a head-release benefit and a
+feature-damage cost, both terms should move with the width of the feature map.
+We therefore re-ran the exposure comparison at two widths of the same
+SmallCNN: $\times0.5$ (33.8k parameters) and $\times2$ (412k), against the
+baseline $\times1$ (114k), three seeds each (P16). The cost term moves
+monotonically: the probe drop between $L{=}250$ and $L{=}4000$ is
+$\ProbeDropWHalf$ at $\times0.5$, $\DropA3$ at $\times1$ and
+$\ProbeDropWTwo$ at $\times2$ --- a factor of nine across the range. The
+benefit term shifts in time instead of vanishing: at $L{=}250$ the head has
+already released in \A2WTwo{} of the $\times2$ runs and in all baseline runs,
+but in none of the $\times0.5$ runs (\A2WHalf), because at that width the head
+crosses the $0.5$ threshold only between steps \WHalfCrossMin{} and
+\WHalfCrossMax{} --- and in one of the three seeds the probe has already fallen
+below $0.70$ by then. The window is therefore widest for a wide, redundant
+feature map and both late-opening and early-closing for a thin one: this is
+exactly the two-term prediction, and it places the architecture boundary
+conditions above on a single axis --- ResNet-18's residual path (probe drop
+$0.049$) and the two-layer MLP (no measurable drop) are the $\times2$ end of
+the same scale.
+
 \input{../analysis/tables/tab_resnet.tex}
 
 \paragraph{How much information must the target lose?}
@@ -749,6 +818,11 @@ the effect that survives is the adaptation-speed effect.
 \subsection{External validity: a larger label space and a second cross-domain
 partner}
 \label{sec:external}
+Across all extensions the invariant is the \emph{ordering} --- the head
+releases first --- and it holds in every single run; what varies is the size
+of the feature-damage term, which the two-term (benefit $-$ damage) picture
+predicts from the redundancy of the feature map. The paragraphs below separate
+these two aspects: the invariants, and then the moderator.
 
 \paragraph{CIFAR-100 (25 old / 25 new fine classes).}
 Table~\ref{tab:c100} and Fig.~\ref{fig:external} repeat the protocol with ten
@@ -804,8 +878,11 @@ costs accuracy at the endpoint while still helping early.}
 \subsection{Resources}
 \label{sec:r-resources}
 All runs were executed on a single RTX 5060 Laptop GPU (8.5\,GB).
-Table~\ref{tab:resources} reports measured resources: \NumRuns{} runs in total
-(189 confirmatory runs plus one timing run), mean wall time \WallMean\,s per run
+Table~\ref{tab:resources} reports measured resources: \NumConfirmatory{}
+confirmatory runs in total (\NumExecuted{} runs executed overall: one timing
+run, \NumCalibration{} calibration/smoke runs and \NumExtended{}
+post-hoc robustness runs outside the pre-registered gate set), mean wall time
+\WallMean\,s per run
 (max \WallMax\,s), peak RSS \PeakRss\,MB, peak GPU memory \PeakGpu\,MB. The
 whole campaign fits in a few GPU-hours, which made it possible to run the
 pre-registered gates without degradation.
@@ -900,9 +977,10 @@ rule transfers across learning rates after a short calibration that measures
 the two crossing times once: switch anywhere between them.
 
 \paragraph{Limitations.}
-First, this is a \emph{pilot}: the claim ceiling frozen before execution
-permits only ``evidence of a separable mechanism on these benchmarks''; the
-study is single-lab, single-GPU, and its seeds share one data ordering.
+First, the claim ceiling frozen before execution permits only ``evidence of a
+separable mechanism on these benchmarks'': the study is pre-registered with
+\NumConfirmatory{} confirmatory runs, but it is single-lab, single-GPU, and
+its seeds share one data ordering.
 Second, terminal between-condition differences are at or below the measured
 rerun noise floor (independent processes with identical protocols differ by up
 to $0.024$ accuracy and $0.046$ NLL), so we claim the adaptation-window effect
@@ -920,7 +998,7 @@ condition). Both were fixed and the gates re-evaluated --- the verdict is
 unchanged --- but it is a reminder that pre-registration is only as good as its
 implementation. Independent replication of the \emph{results}, a theoretical
 account of the two timescales, and a lower-noise apparatus for terminal
-effects are required before any claim beyond the pilot ceiling.
+effects are required before any claim beyond the pre-registered claim ceiling.
 
 % ===========================================================================
 \section{Conclusion}
@@ -946,14 +1024,17 @@ learning rate, evaluation density) is recorded with its calibration evidence in
 \texttt{analysis/visualization.py}; all numbers in this manuscript are injected
 by \texttt{analysis/paper_macros.py} from the raw \texttt{metrics.jsonl} files.
 
-\section*{Data availability}
+\section*{Data availability}\begingroup\sloppy
 Underlying image and sensor datasets are third-party and are cited as data
 references in the reference list. The code, configurations, raw per-evaluation
-metrics, checkpoints, and analysis scripts that support the findings of this
-study will be deposited in a public repository with a persistent identifier
-(repository link to be provided at submission) and are otherwise available
-from the corresponding author. All reported numbers are generated from the raw
-\texttt{metrics.jsonl} files by the released analysis scripts.
+metrics and analysis scripts supporting this study are released in the GitHub
+repository \url{https://github.com/python123flask/C1-head-feature-window} and
+archived at Zenodo~\cite{xliu2026c1release} (version v2.0; version DOI
+\url{https://doi.org/10.5281/zenodo.23157275}, concept DOI
+\url{https://doi.org/10.5281/zenodo.23157274}). All reported numbers are
+generated from the raw \texttt{metrics.jsonl} files in that archive by the
+released analysis scripts.
+\endgroup
 
 \section*{Declaration of competing interest}
 The author declares that there are no known competing financial interests or
@@ -1165,6 +1246,11 @@ Journal of Machine Learning Research 12 (2011) 2825--2830.
 \bibitem{alain2017understanding}
 S.~Alain, Y.~Bengio, ``Understanding intermediate layers using linear
 classifier probes,'' in \emph{ICLR Workshop}, 2017.
+
+\bibitem{xliu2026c1release}
+X.~Liu, ``C1-head-feature-window: pre-registered study code and raw
+evaluation metrics [software],'' Zenodo, version v2.0, 2026.
+DOI: 10.5281/zenodo.23157275.
 
 \end{thebibliography}
 

@@ -1,0 +1,14 @@
+{
+  "status": "running",
+  "updated_at": "2026-10-05T18:16:06+0800",
+  "counters": {
+    "planned": 4
+  },
+  "events": [
+    {
+      "ts": "2026-10-05T18:16:06+0800",
+      "event": "batch_start",
+      "detail": "blocks=['P15-detsrc', 'P16-width'] n=4 shard=3/6"
+    }
+  ]
+}

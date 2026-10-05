@@ -1,8 +1,8 @@
 {
-  "status": "idle",
-  "updated_at": "2026-10-05T11:31:51+0800",
+  "status": "running",
+  "updated_at": "2026-10-05T18:16:05+0800",
   "counters": {
-    "planned": 14,
+    "planned": 4,
     "succeeded": 14,
     "failed": 0,
     "blocked": 0,
@@ -348,6 +348,11 @@
       "ts": "2026-10-05T11:31:51+0800",
       "event": "batch_end",
       "detail": "ok=14 fail=0 blocked=0"
+    },
+    {
+      "ts": "2026-10-05T18:16:05+0800",
+      "event": "batch_start",
+      "detail": "blocks=['P15-detsrc', 'P16-width'] n=4 shard=1/6"
     }
   ]
 }

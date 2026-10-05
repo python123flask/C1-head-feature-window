@@ -1,0 +1,28 @@
+{
+  "status": "idle",
+  "updated_at": "2026-10-05T20:31:44+0800",
+  "counters": {
+    "planned": 1,
+    "succeeded": 1,
+    "failed": 0,
+    "blocked": 0,
+    "wall_s": 66.8
+  },
+  "events": [
+    {
+      "ts": "2026-10-05T20:30:38+0800",
+      "event": "batch_start",
+      "detail": "blocks=['P15-detsrc'] n=1 shard=0/1"
+    },
+    {
+      "ts": "2026-10-05T20:31:44+0800",
+      "event": "run_done",
+      "detail": "P15_detsrc_L250_s42=succeeded ok=1 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:31:44+0800",
+      "event": "batch_end",
+      "detail": "ok=1 fail=0 blocked=0"
+    }
+  ]
+}

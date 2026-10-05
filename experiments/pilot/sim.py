@@ -250,7 +250,8 @@ def _run(config: dict, run_dir: Path, device, summary: dict) -> None:
 
     # ---------- 模型
     model_spec = config.get("model", "smallcnn" if mode != "sensor" else "smallmlp")
-    model = build_model(model_spec, head_dim).to(device)
+    model = build_model(model_spec, head_dim,
+                        width_mult=float(config.get("width_mult", 1.0))).to(device)
     summary["params"] = count_params(model)
     summary["tasks"] = {
         "old": old_task.describe() if old_task else None,

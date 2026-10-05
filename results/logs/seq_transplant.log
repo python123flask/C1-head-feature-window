@@ -1,0 +1,8 @@
+blocks=['P15-dettransplant'] shard=0/1 to_run=6 skipped_done=0 workers=1
+[1/6] P15_detHeadShort_featLong_s42 succeeded (27s elapsed)
+[2/6] P15_detHeadLong_featShort_s42 succeeded (52s elapsed)
+[3/6] P15_detHeadShort_featLong_s123 succeeded (78s elapsed)
+[4/6] P15_detHeadLong_featShort_s123 succeeded (103s elapsed)
+[5/6] P15_detHeadShort_featLong_s456 succeeded (128s elapsed)
+[6/6] P15_detHeadLong_featShort_s456 succeeded (154s elapsed)
+done: ok=6 fail=0 blocked=0 wall=154s

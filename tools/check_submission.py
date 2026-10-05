@@ -124,8 +124,8 @@ if dup_inputs:
     issues.append(f"duplicate \\input: {dup_inputs}")
 
 # 7 Elsevier/Neurocomputing 必需声明（依据 Guide for authors 原文）
+# 注意：highlights 按指南以单独文件提交（见 7b），不在正文中设必需项
 required = {
-    "highlights": r"\\begin\{highlights\}",
     "CRediT author statement": r"CRediT author",
     "declaration of competing interest": r"(?i)competing interest",
     "funding": r"(?i)fund(ing|ed)",
@@ -137,7 +137,8 @@ for name, pat in required.items():
     if not re.search(pat, t):
         issues.append(f"missing required statement: {name}")
 
-# 7b Highlights 规则：3–5 条、每条 ≤85 字符（含空格）
+# 7b Highlights：指南要求“单独文件、文件名含 highlights、3–5 条、每条 ≤85 字符”；
+#    正文放不放 highlights 环境均可（现按指南以单独文件提交，正文不再放置）
 hl = re.search(r"\\begin\{highlights\}(.*?)\\end\{highlights\}", t, re.S)
 if hl:
     items = re.findall(r"\\item\s+(.+)", hl.group(1))
@@ -147,7 +148,19 @@ if hl:
     if long_items:
         issues.append(f"highlights >85 chars: {[(len(i), i[:40]) for i in long_items]}")
 else:
-    issues.append("highlights environment not found")
+    warns.append("manuscript has no highlights env (submitted as a separate file)")
+
+hl_file = base / "highlights.txt"
+if hl_file.exists():
+    fitems = [l[2:].strip() for l in hl_file.read_text(encoding="utf-8").splitlines()
+              if l.startswith("- ")]
+    if not 3 <= len(fitems) <= 5:
+        issues.append(f"highlights.txt items={len(fitems)} not in 3..5")
+    too_long = [i for i in fitems if len(i) > 85]
+    if too_long:
+        issues.append(f"highlights.txt >85 chars: {[(len(i), i[:40]) for i in too_long]}")
+elif base.name == "submission":
+    issues.append("highlights.txt missing from submission package")
 
 # 7c 图/表必须在正文中被引用（指南：cite all images/tables）
 labels_fig = set(re.findall(r"\\label\{(fig:[^}]*)\}", t))

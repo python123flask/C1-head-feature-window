@@ -1,0 +1,158 @@
+{
+  "status": "idle",
+  "updated_at": "2026-10-05T20:28:45+0800",
+  "counters": {
+    "planned": 12,
+    "succeeded": 12,
+    "failed": 0,
+    "blocked": 0,
+    "wall_s": 1169.5
+  },
+  "events": [
+    {
+      "ts": "2026-10-05T19:58:17+0800",
+      "event": "batch_start",
+      "detail": "blocks=['P15-detsrc'] n=5 shard=0/1"
+    },
+    {
+      "ts": "2026-10-05T20:00:14+0800",
+      "event": "run_done",
+      "detail": "P15_detsrc_L4000_s42=succeeded ok=1 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:01:33+0800",
+      "event": "run_done",
+      "detail": "P15_detsrc_L250_s123=succeeded ok=2 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:03:29+0800",
+      "event": "run_done",
+      "detail": "P15_detsrc_L4000_s123=succeeded ok=3 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:04:41+0800",
+      "event": "run_done",
+      "detail": "P15_detsrc_L250_s456=succeeded ok=4 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:06:35+0800",
+      "event": "run_done",
+      "detail": "P15_detsrc_L4000_s456=succeeded ok=5 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:06:35+0800",
+      "event": "batch_end",
+      "detail": "ok=5 fail=0 blocked=0"
+    },
+    {
+      "ts": "2026-10-05T20:06:39+0800",
+      "event": "batch_start",
+      "detail": "blocks=['P15-dettransplant'] n=6 shard=0/1"
+    },
+    {
+      "ts": "2026-10-05T20:07:05+0800",
+      "event": "run_done",
+      "detail": "P15_detHeadShort_featLong_s42=succeeded ok=1 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:07:31+0800",
+      "event": "run_done",
+      "detail": "P15_detHeadLong_featShort_s42=succeeded ok=2 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:07:56+0800",
+      "event": "run_done",
+      "detail": "P15_detHeadShort_featLong_s123=succeeded ok=3 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:08:21+0800",
+      "event": "run_done",
+      "detail": "P15_detHeadLong_featShort_s123=succeeded ok=4 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:08:47+0800",
+      "event": "run_done",
+      "detail": "P15_detHeadShort_featLong_s456=succeeded ok=5 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:09:12+0800",
+      "event": "run_done",
+      "detail": "P15_detHeadLong_featShort_s456=succeeded ok=6 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:09:12+0800",
+      "event": "batch_end",
+      "detail": "ok=6 fail=0 blocked=0"
+    },
+    {
+      "ts": "2026-10-05T20:09:15+0800",
+      "event": "batch_start",
+      "detail": "blocks=['P16-width'] n=12 shard=0/1"
+    },
+    {
+      "ts": "2026-10-05T20:10:02+0800",
+      "event": "run_done",
+      "detail": "P16_w0.5_L250_s42=succeeded ok=1 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:10:47+0800",
+      "event": "run_done",
+      "detail": "P16_w0.5_L250_s123=succeeded ok=2 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:11:32+0800",
+      "event": "run_done",
+      "detail": "P16_w0.5_L250_s456=succeeded ok=3 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:12:37+0800",
+      "event": "run_done",
+      "detail": "P16_w0.5_L4000_s42=succeeded ok=4 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:13:40+0800",
+      "event": "run_done",
+      "detail": "P16_w0.5_L4000_s123=succeeded ok=5 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:14:43+0800",
+      "event": "run_done",
+      "detail": "P16_w0.5_L4000_s456=succeeded ok=6 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:16:36+0800",
+      "event": "run_done",
+      "detail": "P16_w2_L250_s42=succeeded ok=7 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:18:29+0800",
+      "event": "run_done",
+      "detail": "P16_w2_L250_s123=succeeded ok=8 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:20:24+0800",
+      "event": "run_done",
+      "detail": "P16_w2_L250_s456=succeeded ok=9 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:23:19+0800",
+      "event": "run_done",
+      "detail": "P16_w2_L4000_s42=succeeded ok=10 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:26:16+0800",
+      "event": "run_done",
+      "detail": "P16_w2_L4000_s123=succeeded ok=11 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:28:45+0800",
+      "event": "run_done",
+      "detail": "P16_w2_L4000_s456=succeeded ok=12 fail=0"
+    },
+    {
+      "ts": "2026-10-05T20:28:45+0800",
+      "event": "batch_end",
+      "detail": "ok=12 fail=0 blocked=0"
+    }
+  ]
+}

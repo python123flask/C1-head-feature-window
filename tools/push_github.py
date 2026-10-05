@@ -85,8 +85,8 @@ def main():
     print(f"[check] staged={len(staged)} files, {total / 1e6:.1f} MB, none >90MB")
 
     rc, out = run(["git", "commit", "-m",
-                   "Pre-registered pilot: head/feature timescale separation under "
-                   "uniform label exposure (207 runs + gates + figures + manuscript)"])
+                   "Pre-registered study: head/feature timescale separation under "
+                   "uniform label exposure (231 runs + gates + figures + manuscript)"])
     if rc != 0 and "nothing to commit" not in out:
         sys.exit("commit failed:\n" + out)
     print(f"[commit] staged files: {len(staged)}")

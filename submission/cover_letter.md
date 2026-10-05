@@ -27,21 +27,27 @@ label-scarce transition.
 
 2. **Practical, quantitative guidance.** Read as budget-limited adaptation,
    every exposure beats none for every budget from 50 to 2000 steps (5/5
-   seeds), by up to +11.5 accuracy points at a 50-step budget, and an interior
-   optimum in exposure length appears on the pre-registered adaptation-speed
+   seeds), by up to +11.5 accuracy points at a 50-step budget; in
+   time-to-accuracy terms, reaching 0.65 accuracy takes 32% fewer optimizer
+   steps (360 -> 245, 5/5 seeds). An interior optimum in exposure length
+   appears on the pre-registered adaptation-speed
    readout. A stopping rule follows directly: switch when the head stops
    reading the old task and before the feature probe begins to fall - a signal
    current-task accuracy cannot provide.
 
 3. **Unusually strong evidence practice.** The study was pre-registered with
    four frozen decision gates and a frozen claim ceiling; every protocol
-   deviation is logged with its calibration evidence. We report 207 runs over
-   five datasets (CIFAR-10/100, SVHN, Fashion-MNIST, UCI gas-sensor drift),
-   three architectures, a five-point target-entropy dose-response, a causal
-   cross-transplant of heads and features, five controls (including a
-   last-layer-reset baseline), and a deterministic-kernel replication whose
+   deviation is logged with its calibration evidence. We report 189
+   confirmatory runs (231 runs executed in total) over five datasets
+   (CIFAR-10/100, SVHN, Fashion-MNIST, UCI gas-sensor drift), and three
+   architectures, a five-point target-entropy dose-response, a causal
+   cross-transplant of heads and features -- replicated on a deterministic
+   platform where process-level rerun noise is zero by construction -- five
+   controls (including a
+   last-layer-reset baseline), a width-sensitivity sweep, and a
+   deterministic-kernel replication whose
    identical-configuration reruns are bitwise identical (zero process-level
-   noise). Code, raw per-evaluation metrics, checkpoints and the analysis
+   noise). Code, raw per-evaluation metrics and the analysis
    pipeline are released.
 
 4. **Honest negative results.** Under deterministic kernels the endpoint

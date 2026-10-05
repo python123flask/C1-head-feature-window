@@ -12,28 +12,35 @@ import torch.nn as nn
 
 
 class SmallCNN(nn.Module):
-    """约 2.1M 参数的主实验 CNN（32×32 RGB 输入）。"""
+    """主实验 CNN（32×32 RGB 输入；width_mult=1 时恰为 113,738 参数）。
 
-    feat_dim = 2048
+    width_mult 用于档 C 的宽度敏感性（P16）：改变特征通道数，
+    检验“特征损伤幅度随特征图冗余度变化”这一预测。
+    """
 
-    def __init__(self, num_classes: int = 10):
+    feat_dim = 2048          # width_mult=1.0 的默认值；__init__ 会用实例属性覆盖
+
+    def __init__(self, num_classes: int = 10, width_mult: float = 1.0):
         super().__init__()
+        c1, c2, c3 = (max(8, int(round(w * float(width_mult)))) for w in (32, 64, 128))
         self.features = nn.Sequential(
-            nn.Conv2d(3, 32, 3, padding=1),   # 32x32x32
+            nn.Conv2d(3, c1, 3, padding=1),   # 32x32xc1
             nn.ReLU(inplace=True),
-            nn.MaxPool2d(2),                   # 16x16x32
-            nn.Conv2d(32, 64, 3, padding=1),  # 16x16x64
+            nn.MaxPool2d(2),                   # 16x16xc1
+            nn.Conv2d(c1, c2, 3, padding=1),  # 16x16xc2
             nn.ReLU(inplace=True),
-            nn.MaxPool2d(2),                   # 8x8x64
-            nn.Conv2d(64, 128, 3, padding=1),  # 8x8x128
+            nn.MaxPool2d(2),                   # 8x8xc2
+            nn.Conv2d(c2, c3, 3, padding=1),  # 8x8xc3
             nn.ReLU(inplace=True),
             # 32x32 输入下恰为 8x8 -> 4x4：与 AdaptiveAvgPool2d(4) 前向**逐位等价**，
             # 但其反向不走 adaptive_avg_pool2d_backward_cuda（原子累加、非确定），
             # 因此可支持 P10 的确定性核复现。
-            nn.AvgPool2d(2, 2),                # 4x4x128
-            nn.Flatten(),                      # 2048
+            nn.AvgPool2d(2, 2),                # 4x4xc3
+            nn.Flatten(),                      # 16*c3
         )
-        self.head = nn.Linear(2048, num_classes)
+        self.head = nn.Linear(c3 * 16, num_classes)
+        self.feat_dim = c3 * 16
+        self.width_mult = float(width_mult)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.head(self.features(x))
@@ -76,9 +83,9 @@ class SmallMLP(nn.Module):
         return self.head(self.features(x))
 
 
-def build_model(spec: str, num_classes: int) -> nn.Module:
+def build_model(spec: str, num_classes: int, width_mult: float = 1.0) -> nn.Module:
     if spec == "smallcnn":
-        return SmallCNN(num_classes)
+        return SmallCNN(num_classes, width_mult=width_mult)
     if spec == "resnet18":
         return ResNet18Split(num_classes)
     if spec == "smallmlp":

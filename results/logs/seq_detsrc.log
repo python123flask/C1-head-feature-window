@@ -1,0 +1,7 @@
+blocks=['P15-detsrc'] shard=0/1 to_run=5 skipped_done=1 workers=1
+[1/5] P15_detsrc_L4000_s42 succeeded (117s elapsed)
+[2/5] P15_detsrc_L250_s123 succeeded (197s elapsed)
+[3/5] P15_detsrc_L4000_s123 succeeded (312s elapsed)
+[4/5] P15_detsrc_L250_s456 succeeded (384s elapsed)
+[5/5] P15_detsrc_L4000_s456 succeeded (499s elapsed)
+done: ok=5 fail=0 blocked=0 wall=499s
