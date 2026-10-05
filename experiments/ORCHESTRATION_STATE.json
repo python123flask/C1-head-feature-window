@@ -1,0 +1,248 @@
+{
+  "status": "idle",
+  "updated_at": "2026-10-05T14:05:53+0800",
+  "counters": {
+    "planned": 4,
+    "succeeded": 4,
+    "failed": 0,
+    "blocked": 0,
+    "wall_s": 327.4
+  },
+  "events": [
+    {
+      "ts": "2026-10-04T23:24:47+0800",
+      "event": "grid_made",
+      "detail": "102 runs"
+    },
+    {
+      "ts": "2026-10-04T23:25:14+0800",
+      "event": "batch_start",
+      "detail": "blocks=['S-exposure', 'S-calib'] n=6 workers=3"
+    },
+    {
+      "ts": "2026-10-04T23:27:16+0800",
+      "event": "batch_start",
+      "detail": "blocks=['S-exposure'] n=3 shard=-"
+    },
+    {
+      "ts": "2026-10-04T23:27:41+0800",
+      "event": "run_done",
+      "detail": "S_exposure_eps0.9=failed ok=0 fail=1"
+    },
+    {
+      "ts": "2026-10-04T23:28:02+0800",
+      "event": "run_done",
+      "detail": "S_exposure_eps1=failed ok=0 fail=2"
+    },
+    {
+      "ts": "2026-10-04T23:28:25+0800",
+      "event": "run_done",
+      "detail": "S_exposure_eps1_L250=failed ok=0 fail=3"
+    },
+    {
+      "ts": "2026-10-04T23:28:25+0800",
+      "event": "batch_end",
+      "detail": "ok=0 fail=3 blocked=0"
+    },
+    {
+      "ts": "2026-10-04T23:29:22+0800",
+      "event": "batch_start",
+      "detail": "blocks=['S-exposure'] n=3 shard=-"
+    },
+    {
+      "ts": "2026-10-04T23:30:15+0800",
+      "event": "run_done",
+      "detail": "S_exposure_eps0.9=succeeded ok=1 fail=0"
+    },
+    {
+      "ts": "2026-10-04T23:31:05+0800",
+      "event": "run_done",
+      "detail": "S_exposure_eps1=succeeded ok=2 fail=0"
+    },
+    {
+      "ts": "2026-10-04T23:31:30+0800",
+      "event": "run_done",
+      "detail": "S_exposure_eps1_L250=succeeded ok=3 fail=0"
+    },
+    {
+      "ts": "2026-10-04T23:31:30+0800",
+      "event": "batch_end",
+      "detail": "ok=3 fail=0 blocked=0"
+    },
+    {
+      "ts": "2026-10-04T23:34:20+0800",
+      "event": "batch_start",
+      "detail": "blocks=['S-calib', 'S-smoke', 'P0-timing'] n=5 shard=-"
+    },
+    {
+      "ts": "2026-10-04T23:34:47+0800",
+      "event": "run_done",
+      "detail": "S_calib_lr0.001=succeeded ok=1 fail=0"
+    },
+    {
+      "ts": "2026-10-04T23:35:13+0800",
+      "event": "run_done",
+      "detail": "S_calib_lr0.003=succeeded ok=2 fail=0"
+    },
+    {
+      "ts": "2026-10-04T23:35:39+0800",
+      "event": "run_done",
+      "detail": "S_calib_lr0.0003=succeeded ok=3 fail=0"
+    },
+    {
+      "ts": "2026-10-04T23:35:53+0800",
+      "event": "run_done",
+      "detail": "S_smoke=succeeded ok=4 fail=0"
+    },
+    {
+      "ts": "2026-10-04T23:37:11+0800",
+      "event": "run_done",
+      "detail": "P0_timing=succeeded ok=5 fail=0"
+    },
+    {
+      "ts": "2026-10-04T23:37:11+0800",
+      "event": "batch_end",
+      "detail": "ok=5 fail=0 blocked=0"
+    },
+    {
+      "ts": "2026-10-04T23:52:45+0800",
+      "event": "grid_made",
+      "detail": "102 runs"
+    },
+    {
+      "ts": "2026-10-04T23:53:08+0800",
+      "event": "grid_made",
+      "detail": "108 runs"
+    },
+    {
+      "ts": "2026-10-04T23:53:19+0800",
+      "event": "batch_start",
+      "detail": "blocks=['S-exposure2'] n=6 shard=-"
+    },
+    {
+      "ts": "2026-10-04T23:54:26+0800",
+      "event": "run_done",
+      "detail": "S_exp2_eps1_lr0.001=succeeded ok=1 fail=0"
+    },
+    {
+      "ts": "2026-10-04T23:55:29+0800",
+      "event": "run_done",
+      "detail": "S_exp2_eps1_lr0.0003=succeeded ok=2 fail=0"
+    },
+    {
+      "ts": "2026-10-04T23:56:32+0800",
+      "event": "run_done",
+      "detail": "S_exp2_eps1_lr0.0001=succeeded ok=3 fail=0"
+    },
+    {
+      "ts": "2026-10-04T23:57:35+0800",
+      "event": "run_done",
+      "detail": "S_exp2_eps0.9_lr0.001=succeeded ok=4 fail=0"
+    },
+    {
+      "ts": "2026-10-04T23:58:38+0800",
+      "event": "run_done",
+      "detail": "S_exp2_eps0.9_lr0.0003=succeeded ok=5 fail=0"
+    },
+    {
+      "ts": "2026-10-04T23:59:41+0800",
+      "event": "run_done",
+      "detail": "S_exp2_eps0.9_lr0.0001=succeeded ok=6 fail=0"
+    },
+    {
+      "ts": "2026-10-04T23:59:41+0800",
+      "event": "batch_end",
+      "detail": "ok=6 fail=0 blocked=0"
+    },
+    {
+      "ts": "2026-10-05T00:01:22+0800",
+      "event": "grid_made",
+      "detail": "114 runs"
+    },
+    {
+      "ts": "2026-10-05T00:01:33+0800",
+      "event": "batch_start",
+      "detail": "blocks=['S-smoke', 'P0-timing'] n=2 shard=-"
+    },
+    {
+      "ts": "2026-10-05T00:01:52+0800",
+      "event": "run_done",
+      "detail": "S_smoke=succeeded ok=1 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:03:16+0800",
+      "event": "run_done",
+      "detail": "P0_timing=succeeded ok=2 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:03:16+0800",
+      "event": "batch_end",
+      "detail": "ok=2 fail=0 blocked=0"
+    },
+    {
+      "ts": "2026-10-05T01:41:19+0800",
+      "event": "batch_start",
+      "detail": "blocks=['P0-timing'] n=1 shard=-"
+    },
+    {
+      "ts": "2026-10-05T01:42:45+0800",
+      "event": "run_done",
+      "detail": "P0_timing=succeeded ok=1 fail=0"
+    },
+    {
+      "ts": "2026-10-05T01:42:45+0800",
+      "event": "batch_end",
+      "detail": "ok=1 fail=0 blocked=0"
+    },
+    {
+      "ts": "2026-10-05T08:12:05+0800",
+      "event": "grid_made",
+      "detail": "147 runs"
+    },
+    {
+      "ts": "2026-10-05T08:16:38+0800",
+      "event": "grid_made",
+      "detail": "156 runs"
+    },
+    {
+      "ts": "2026-10-05T10:14:22+0800",
+      "event": "grid_made",
+      "detail": "202 runs"
+    },
+    {
+      "ts": "2026-10-05T10:14:24+0800",
+      "event": "batch_start",
+      "detail": "blocks=['S-calib2'] n=4 shard=-"
+    },
+    {
+      "ts": "2026-10-05T10:14:54+0800",
+      "event": "run_done",
+      "detail": "S_calib2_smallcnn_A5000=succeeded ok=1 fail=0"
+    },
+    {
+      "ts": "2026-10-05T10:15:42+0800",
+      "event": "run_done",
+      "detail": "S_calib2_smallcnn_A10000=succeeded ok=2 fail=0"
+    },
+    {
+      "ts": "2026-10-05T10:17:07+0800",
+      "event": "run_done",
+      "detail": "S_calib2_resnet18_A5000=succeeded ok=3 fail=0"
+    },
+    {
+      "ts": "2026-10-05T10:19:52+0800",
+      "event": "run_done",
+      "detail": "S_calib2_resnet18_A10000=succeeded ok=4 fail=0"
+    },
+    {
+      "ts": "2026-10-05T10:19:52+0800",
+      "event": "batch_end",
+      "detail": "ok=4 fail=0 blocked=0"
+    },
+    {
+      "ts": "2026-10-05T14:05:53+0800",
+      "event": "grid_made",
+      "detail": "207 runs"
+    }
+  ]
+}

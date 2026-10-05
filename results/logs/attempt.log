@@ -1,0 +1,38 @@
+[2026-10-04] S-tests 16/16 PASS (exit 0)
+[2026-10-04] S-exposure 3 runs -> eps=0.9 cannot de-specialize head; triggers D4
+[2026-10-04] S-exposure2 6 runs -> choose eps=1.0 + lr_B=1e-4 (window 75-325 steps, A3 drop 0.135)
+[2026-10-04] S-calib 3 runs -> default class split end_A=0.81 < 0.85; triggers D3 (class split)
+[2026-10-05] S-smoke + P0-timing OK (85.6s, 606MB GPU, 1947MB RSS)
+[2026-10-05] P1-main 40/40 succeeded (3 shards)
+[2026-10-05] P2 15/15, P3 9/9 succeeded
+[2026-10-05] P4 first attempt failed (B10 npz key bug) -> fixed + regression test -> 10/10 succeeded
+[2026-10-05] P5 8/8, P7 6/6, P6 12/12 succeeded
+[2026-10-05] decision gate -> advance (A1/A2/A3/A4 all pass); claim ceiling unchanged
+[2026-10-05] cross-model review (4th attempt) -> FIX FIRST-1,2: A4 E1 clause never entered `pass` (CRITICAL), E2 any-vs-every (MAJOR) + 4 minor
+[2026-10-05] B11-B16 fixed and gate re-evaluated -> verdict unchanged (advance); E1 clause now compares P1-vs-P3 L-range collapse (no collapse)
+[2026-10-05] extensions P8-resnet 9/9, P9-eps 12/12, P10-det 21/21 succeeded -> 142/142 formal runs (156 incl. calibration)
+[2026-10-05] P10 deterministic kernels -> 6/6 identical-config pairs bitwise identical (max|delta|=0); terminal L-range acc 0.0078 / NLL 0.0444
+[2026-10-05] final gate over all blocks -> advance; A1 142/142, A2 6/6 conditions, A3 0.124/0.115, A4 with E1+E2 clauses PASS
+[2026-10-05] external-validity data added: CIFAR-100 + Fashion-MNIST via hf-mirror -> data/cache/*.npz (labels sanity: 1-NN 0.30 vs chance 0.04)
+[2026-10-05] S-calib2 -> CIFAR-100 25-class end_A 0.93 (SmallCNN) / 0.91 (ResNet); same A1 threshold 0.85 applies
+[2026-10-05] P11-c100 18/18, P12-fmnist 9/9, P13-detseed 15/15 succeeded -> 202 total runs, 184 formal
+[2026-10-05] A2 in every extension run: CIFAR-100 6/6 both models, FMNIST 6/6; window gain on deterministic platform +0.0263 (10/10 seeds); endpoint L-range 0.0021
+[2026-10-05] budget analysis: paired gain positive in 5/5 seeds at EVERY budget 50..2000 (window mean), endpoint positive 5/5 for B<=500
+[2026-10-05] novelty re-check (arXiv + OpenAlex): "label smoothing"+"continual learning" = 0 hits; "uniform label"+"plasticity" = 0 hits; closest concurrent work arXiv:2609.33620 added to related work
+[2026-10-05] submission self-check tool added (tools/check_submission.py): env/macro/cite/ref/file/abstract/keyword/highlight/declaration checks -> PASS
+[2026-10-05] per official Neurocomputing Guide for authors: abstract trimmed 287->242 words (limit 250); keyword "loss of plasticity"->"plasticity loss" (avoid "of"); added generative-AI declaration section; funding = exact recommended no-funding sentence; \ead placeholder enabled; [dataset] markers on 4 dataset refs; fig9 uncited -> cited
+[2026-10-05] submission/ built (26 files): main.tex with in-package paths, Figure_1..Figure_11.pdf by appearance order, 10 tables, results_macros.tex (175), references.bib (32), highlights.txt (5 x <=85 chars), README compliance table -> check PASS
+[2026-10-05] final regression: tests 16/16 exit=0; gate advance (A1 184/184, A4 pass); runs 202/202 succeeded
+[2026-10-05] per user request: author info filled (Xianzhe Liu 刘贤喆 / Hunan University / liuxianzhe@hnu.edu.cn); submission rebuilt as SINGLE merged main.tex (175 macros + 10 tables inlined, 0 residual \input,0 residual ../analysis); figures remain separate per guide ("submit each image as a separate file")
+[2026-10-05] new checks added: duplicate \label/\input detection -> found & removed duplicate \input of tab_dose.tex; found & fixed uncited tab:det -> both fixed, check PASS
+[2026-10-05] compile-level check added (tools/check_compile.py): non-ASCII in typeset text / brace & $ balance / abstract-has-no-cite / macro definitions
+[2026-10-05] fix: Chinese name & university in \author/\affiliation would break pdfLaTeX (Unicode not set up) -> romanized active line + Chinese kept as commented XeLaTeX variant; README updated
+[2026-10-05] fix: window numbers conflated 3 different quantities -> A2FirstMin/Max=65/220 (all conditions), WinFirst/Last=160/380 (high L=4000 window), CalWinFirst/Last (lr calibration); abstract/contributions/results now use the right macro each
+[2026-10-05] fix: "\NumRuns formal runs" overstated -> "185 runs in total (184 confirmatory + 1 timing)"
+[2026-10-05] FINAL: tests16/16 exit0 | gate advance (A1-A4) | runs 202/202 | submission check PASS | compile check PASS | package 15 files / 372 KB
+[2026-10-05] P14-headreset 5/5 succeeded (last-layer reset baseline) -> 207 total runs, 189 confirmatory; speed1000 reset=0.683 vs L0=0.639 (+0.0442, 5/5), vs L250 (+0.0184, 5/5)
+[2026-10-05] DOI/author audit via Crossref+DataCite+OpenAlex+arXiv+S2 -> FIXED: delange (title 'Defying forgetting', 8 real authors, DOI 10.1109/TPAMI.2021.3057446), masana (DOI 10.1109/TPAMI.2022.3213473 + 6 real authors + full title), kirkpatrick (13 real authors), papyan (title 'deep learning training' + DOI 10.1073/pnas.2015509117), gasdrift (DOI 10.24432/C5RP6W, Vergara 2012); REMOVED unverifiable papadopoulos2022neural + its 2 cites -> refs 32->31, all verified
+[2026-10-05] stale-count sweep 202/184 -> 207/189 (paper/report/RECORD/highlights/README); 'three controls' -> four; new check: references.bib<->bibitem key set + bib syntax; FINAL battery: tests 16/16 exit0, gate advance 189/189, runs 207/207, submission PASS, compile PASS
+[2026-10-05] new tool tools/verify_claims.py: audits every HAND-WRITTEN number in the prose against raw data (budget gains, 5-point dose, external-validity drops, calibration window macros, 1/eta scaling triple, param counts, dataset sizes) -> 30/30 PASS; fixed 3 bugs in the checker itself (drift read from last row instead of end-of-B; calibration window must be checked via macros; 114k is correct rounding of 113738)
+[2026-10-05] last identifier verified: Fashion-MNIST arXiv:1708.07747 (title/authors/year match) -> all 10 identified references now verified against arXiv/Crossref/DataCite/OpenAlex/ACL/S2
+[2026-10-05] cover_letter.md added to build pipeline (auto-regenerated); FINAL battery: tests 16/16 | gate advance | runs 207/207 | claims PASS | guide check PASS | compile check PASS | package 16 files

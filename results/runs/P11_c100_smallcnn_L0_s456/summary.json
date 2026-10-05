@@ -1,0 +1,107 @@
+{
+  "run_id": "P11_c100_smallcnn_L0_s456",
+  "block": "P11-c100",
+  "mode": "main",
+  "seed": 456,
+  "L": 0,
+  "shared": "high",
+  "status": "succeeded",
+  "params": {
+    "features": 93248,
+    "head": 51225,
+    "total": 144473
+  },
+  "tasks": {
+    "old": {
+      "name": "cifar100_old",
+      "kind": "image",
+      "n_train": 2500,
+      "n_test": 500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 25,
+      "train_per_class": [
+        500,
+        500,
+        0,
+        0,
+        0,
+        0,
+        500,
+        0,
+        500,
+        500
+      ],
+      "test_per_class": [
+        100,
+        100,
+        0,
+        0,
+        0,
+        0,
+        100,
+        0,
+        100,
+        100
+      ]
+    },
+    "new": {
+      "name": "cifar100_new",
+      "kind": "image",
+      "n_train": 2500,
+      "n_test": 500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 25,
+      "train_per_class": [
+        500,
+        500,
+        500,
+        500,
+        500
+      ],
+      "test_per_class": [
+        100,
+        100,
+        100,
+        100,
+        100
+      ]
+    }
+  },
+  "loss_A": 0.15486023222235962,
+  "loss_C": 0.400055234182626,
+  "freeze_features_C": false,
+  "final": {
+    "n_points": 280,
+    "acc_old_cur": 0.14000000059604645,
+    "acc_old_probe": 0.8880000710487366,
+    "new_task_acc": 0.8300000429153442,
+    "new_task_NLL": 0.5471730828285217,
+    "W2_norm": 7.981849670410156,
+    "feat_drift": 0.5493614673614502,
+    "end_C_new_task_acc": 0.8300000429153442,
+    "end_C_new_task_NLL": 0.5471730828285217,
+    "end_C_acc_new_probe": 0.8080000281333923,
+    "end_C_acc_old_probe": 0.8880000710487366,
+    "end_A_acc": 0.9360000491142273,
+    "end_A_probe": 0.9220000505447388
+  },
+  "error": null,
+  "wall_s": 122.71,
+  "rss_peak_mb": 1891.8,
+  "gpu_peak_mb": 566.6,
+  "device": "cuda"
+}

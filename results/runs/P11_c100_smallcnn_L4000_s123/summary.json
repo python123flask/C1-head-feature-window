@@ -1,0 +1,113 @@
+{
+  "run_id": "P11_c100_smallcnn_L4000_s123",
+  "block": "P11-c100",
+  "mode": "main",
+  "seed": 123,
+  "L": 4000,
+  "shared": "high",
+  "status": "succeeded",
+  "params": {
+    "features": 93248,
+    "head": 51225,
+    "total": 144473
+  },
+  "tasks": {
+    "old": {
+      "name": "cifar100_old",
+      "kind": "image",
+      "n_train": 2500,
+      "n_test": 500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 25,
+      "train_per_class": [
+        500,
+        500,
+        0,
+        0,
+        0,
+        0,
+        500,
+        0,
+        500,
+        500
+      ],
+      "test_per_class": [
+        100,
+        100,
+        0,
+        0,
+        0,
+        0,
+        100,
+        0,
+        100,
+        100
+      ]
+    },
+    "new": {
+      "name": "cifar100_new",
+      "kind": "image",
+      "n_train": 2500,
+      "n_test": 500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 25,
+      "train_per_class": [
+        500,
+        500,
+        500,
+        500,
+        500
+      ],
+      "test_per_class": [
+        100,
+        100,
+        100,
+        100,
+        100
+      ]
+    }
+  },
+  "loss_A": 0.15467529977476224,
+  "loss_B": 3.3578991689682005,
+  "loss_C": 0.32691663489304484,
+  "freeze_features_C": false,
+  "final": {
+    "n_points": 504,
+    "acc_old_cur": 0.1380000114440918,
+    "acc_old_probe": 0.89000004529953,
+    "new_task_acc": 0.812000036239624,
+    "new_task_NLL": 0.7068914771080017,
+    "W2_norm": 7.170467376708984,
+    "feat_drift": 0.59242844581604,
+    "end_C_new_task_acc": 0.812000036239624,
+    "end_C_new_task_NLL": 0.7068914771080017,
+    "end_C_acc_new_probe": 0.7800000309944153,
+    "end_C_acc_old_probe": 0.89000004529953,
+    "end_B_acc_old_probe": 0.7860000133514404,
+    "end_B_acc_old_cur": 0.10400000214576721,
+    "end_B_W2_norm": 5.7126593589782715,
+    "end_B_feat_drift": 0.9987021088600159,
+    "end_B_margin_old": -0.014068184420466423,
+    "end_A_acc": 0.9200000166893005,
+    "end_A_probe": 0.9280000329017639
+  },
+  "error": null,
+  "wall_s": 196.4,
+  "rss_peak_mb": 1913.7,
+  "gpu_peak_mb": 566.2,
+  "device": "cuda"
+}

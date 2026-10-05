@@ -1,0 +1,48 @@
+{
+  "status": "idle",
+  "updated_at": "2026-10-05T08:16:15+0800",
+  "counters": {
+    "planned": 2,
+    "succeeded": 2,
+    "failed": 0,
+    "blocked": 0,
+    "wall_s": 121.9
+  },
+  "events": [
+    {
+      "ts": "2026-10-05T08:12:24+0800",
+      "event": "batch_start",
+      "detail": "blocks=['P10-det'] n=1 shard=-"
+    },
+    {
+      "ts": "2026-10-05T08:13:32+0800",
+      "event": "run_done",
+      "detail": "P10_det_L0_s42_a=succeeded ok=1 fail=0"
+    },
+    {
+      "ts": "2026-10-05T08:13:32+0800",
+      "event": "batch_end",
+      "detail": "ok=1 fail=0 blocked=0"
+    },
+    {
+      "ts": "2026-10-05T08:14:13+0800",
+      "event": "batch_start",
+      "detail": "blocks=['P10-det'] n=2 shard=-"
+    },
+    {
+      "ts": "2026-10-05T08:15:16+0800",
+      "event": "run_done",
+      "detail": "P10_det_L0_s42_a=succeeded ok=1 fail=0"
+    },
+    {
+      "ts": "2026-10-05T08:16:15+0800",
+      "event": "run_done",
+      "detail": "P10_det_L0_s42_b=succeeded ok=2 fail=0"
+    },
+    {
+      "ts": "2026-10-05T08:16:15+0800",
+      "event": "batch_end",
+      "detail": "ok=2 fail=0 blocked=0"
+    }
+  ]
+}

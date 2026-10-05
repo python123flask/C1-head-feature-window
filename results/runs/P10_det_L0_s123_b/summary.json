@@ -1,0 +1,107 @@
+{
+  "run_id": "P10_det_L0_s123_b",
+  "block": "P10-det",
+  "mode": "main",
+  "seed": 123,
+  "L": 0,
+  "shared": "high",
+  "status": "succeeded",
+  "params": {
+    "features": 93248,
+    "head": 20490,
+    "total": 113738
+  },
+  "tasks": {
+    "old": {
+      "name": "cifar10_old",
+      "kind": "image",
+      "n_train": 5000,
+      "n_test": 2500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 10,
+      "train_per_class": [
+        1000,
+        1000,
+        0,
+        0,
+        0,
+        0,
+        1000,
+        0,
+        1000,
+        1000
+      ],
+      "test_per_class": [
+        500,
+        500,
+        0,
+        0,
+        0,
+        0,
+        500,
+        0,
+        500,
+        500
+      ]
+    },
+    "new": {
+      "name": "cifar10_new",
+      "kind": "image",
+      "n_train": 5000,
+      "n_test": 2500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 10,
+      "train_per_class": [
+        1000,
+        1000,
+        1000,
+        1000,
+        1000
+      ],
+      "test_per_class": [
+        500,
+        500,
+        500,
+        500,
+        500
+      ]
+    }
+  },
+  "loss_A": 0.2879407312862575,
+  "loss_C": 0.737625559642911,
+  "freeze_features_C": false,
+  "final": {
+    "n_points": 280,
+    "acc_old_cur": 0.2019999921321869,
+    "acc_old_probe": 0.77734375,
+    "new_task_acc": 0.7299999594688416,
+    "new_task_NLL": 0.8097185492515564,
+    "W2_norm": 8.749848365783691,
+    "feat_drift": 0.4865798354148865,
+    "end_C_new_task_acc": 0.7299999594688416,
+    "end_C_new_task_NLL": 0.8097185492515564,
+    "end_C_acc_new_probe": 0.6455078125,
+    "end_C_acc_old_probe": 0.77734375,
+    "end_A_acc": 0.8859999775886536,
+    "end_A_probe": 0.853515625
+  },
+  "error": null,
+  "wall_s": 212.42,
+  "rss_peak_mb": 2161.0,
+  "gpu_peak_mb": 782.1,
+  "device": "cuda"
+}

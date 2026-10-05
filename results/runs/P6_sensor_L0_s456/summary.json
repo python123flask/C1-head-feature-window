@@ -1,0 +1,100 @@
+{
+  "run_id": "P6_sensor_L0_s456",
+  "block": "P6-sensor",
+  "mode": "sensor",
+  "seed": 456,
+  "L": 0,
+  "shared": "sensor",
+  "status": "succeeded",
+  "params": {
+    "features": 98816,
+    "head": 1542,
+    "total": 100358
+  },
+  "tasks": {
+    "old": {
+      "name": "gas_batch1",
+      "kind": "vector",
+      "n_train": 358,
+      "n_test": 87,
+      "num_classes": 6,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "head_dim": 6,
+      "train_per_class": [
+        72,
+        79,
+        67,
+        24,
+        56,
+        60
+      ],
+      "test_per_class": [
+        18,
+        19,
+        16,
+        6,
+        14,
+        14
+      ]
+    },
+    "new": {
+      "name": "gas_batch5",
+      "kind": "vector",
+      "n_train": 159,
+      "n_test": 38,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 6,
+      "train_per_class": [
+        23,
+        32,
+        16,
+        37,
+        51
+      ],
+      "test_per_class": [
+        5,
+        8,
+        4,
+        9,
+        12
+      ]
+    }
+  },
+  "loss_A": 0.007102909428317798,
+  "loss_C": 0.005858515504245588,
+  "freeze_features_C": false,
+  "final": {
+    "n_points": 280,
+    "acc_old_cur": 0.7011494040489197,
+    "acc_old_probe": 0.9655172228813171,
+    "new_task_acc": 0.9736841917037964,
+    "new_task_NLL": 0.04680831357836723,
+    "W2_norm": 3.981733798980713,
+    "feat_drift": 0.23444458842277527,
+    "end_C_new_task_acc": 0.9736841917037964,
+    "end_C_new_task_NLL": 0.04680831357836723,
+    "end_C_acc_new_probe": 1.0,
+    "end_C_acc_old_probe": 0.9655172228813171,
+    "end_A_acc": 0.9885057210922241,
+    "end_A_probe": 0.9885057210922241
+  },
+  "error": null,
+  "wall_s": 15.69,
+  "rss_peak_mb": 1976.8,
+  "gpu_peak_mb": 67.9,
+  "device": "cuda"
+}

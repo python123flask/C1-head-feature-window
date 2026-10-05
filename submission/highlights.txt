@@ -1,0 +1,6 @@
+Highlights
+- The classifier head loses old-task readability within 65-220 exposure steps
+- A linear probe still reads the features then: the two timescales differ 10-fold
+- Adaptation over the first 1000 steps is interior-optimal in exposure length
+- Every exposure beats none at every adaptation budget (5/5 seeds, 189 runs)
+- A target-entropy dose-response separates damage from label-smoothing effects

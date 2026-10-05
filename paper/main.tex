@@ -1,0 +1,1171 @@
+%% ============================================================================
+%% C1 · 可塑性恢复窗口 —— 论文稿（Neurocomputing 格式）
+%% 编译（由您执行）：pdflatex main.tex（两次）
+%% 数值宏由 analysis/paper_macros.py 自动生成（results_macros.tex）
+%% 图由 analysis/visualization.py 生成（PDF 矢量图），表由 analysis/make_tables.py 生成
+%% ============================================================================
+\documentclass[review,12pt]{elsarticle}
+
+\usepackage{amsmath,amssymb,bm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{siunitx}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\journal{Neurocomputing}
+
+\input{results_macros}
+
+% 兼容性：若所用 elsarticle 版本未定义 highlights 环境，则退化为普通段落
+\makeatletter
+\@ifundefined{highlights}{%
+  \newenvironment{highlights}{\par\noindent\textbf{Highlights}\par\begin{itemize}}{\end{itemize}\par}%
+}{}
+\makeatother
+
+\newcommand{\head}{W_2}
+\newcommand{\feat}{\phi}
+\newcommand{\probe}{\mathrm{probe}}
+\newcommand{\heur}[1]{\textcolor{red}{#1}}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Head first, features later: a transient window of classifier-head
+de-specialization under uniform label exposure and its effect on task adaptation}
+
+% ===========================================================================
+% 作者与机构
+% 注意：pdfLaTeX 无法排版中文（会报 Unicode character not set up），
+% 因此正文用音译名；如改用 XeLaTeX + \usepackage{xeCJK} 编译，可切换到下面的
+% 中文版本（取消注释 Xe 行、注释英文行）：
+%   \author[a]{Xianzhe Liu (刘贤喆)\corref{cor1}}
+%   \affiliation[a]{organization=Hunan University (湖南大学), city=Changsha, ...}
+% ===========================================================================
+\author[a]{Xianzhe Liu\corref{cor1}}
+\cortext[cor1]{Corresponding author}
+\affiliation[a]{organization=Hunan University,
+  addressline=Lushan Road, Yuelu District,
+  city=Changsha, postcode=410082, country=China}
+\ead{liuxianzhe@hnu.edu.cn}
+
+\begin{abstract}
+Loss of plasticity in continually trained networks is usually studied as a
+terminal property; we study it as a \emph{transient}. When labels carry no
+class information, do the classifier head and the feature extractor lose their
+specialization at different rates?
+In a pre-registered three-phase protocol (old-task training; a finite window of
+uniform label exposure of length $L$; adaptation to a new task) we find that
+within \A2FirstMin--\A2FirstMax{} exposure steps the head
+stops reading the old task (accuracy $\le0.50$) while a linear probe still
+recovers it from the features ($\ge0.70$): head de-specialization precedes
+feature damage by an order of magnitude, in 5/5 seeds at two levels of
+feature sharing. Feature damage grows with exposure length (paired probe drop
+$\DropA3$), making adaptation over the first 1000 steps interior-optimal in
+$L$; every $L>0$ beats $L{=}0$ for every adaptation budget from 50 to 2000
+steps (5/5 seeds), by up to $+11.5$ accuracy points at a 50-step budget. A
+gradient decomposition shows feature learning is gated by head row-inequality,
+predicting crossing times proportional to $1/\eta$; we verify this over a
+$10\times$ range. Equal-budget, head-only and permutation controls plus a
+five-point target-entropy dose--response (probe $0.853\to0.585$) exclude four
+competing explanations. It replicates on ResNet-18, CIFAR-100, Fashion-MNIST
+and sensor drift (\NumRuns{} runs); a deterministic replication yields
+bitwise-identical reruns, a window gain of $+\DetWindowGain$ (\DetWindowPos)
+and an endpoint range of $\DetLRrange$, so we claim adaptation-speed, not
+endpoint, gains.
+\end{abstract}
+
+\begin{keyword}
+plasticity loss \sep continual learning \sep label smoothing \sep
+classifier head \sep representation drift \sep task adaptation
+\end{keyword}
+
+\begin{highlights}
+\item The classifier head loses old-task readability within 65--220 exposure steps
+\item A linear probe still reads the features then: the two timescales differ 10-fold
+\item Adaptation over the first 1000 steps is interior-optimal in exposure length
+\item Every exposure beats none at every adaptation budget (5/5 seeds, 189 runs)
+\item A target-entropy dose--response separates damage from label-smoothing effects
+\end{highlights}
+
+\end{frontmatter}
+
+% ===========================================================================
+\section{Introduction}
+\label{sec:intro}
+
+Deep networks trained on a stationary objective \cite{goodfellow2016deep}
+lose the ability to learn new tasks: this \emph{loss of plasticity} is by now
+well documented in continual learning, non-stationary streams, and repeated
+retraining \cite{joudaki2026barriers,kumar2022loss}, alongside its better-known
+sibling, catastrophic forgetting
+\cite{kirkpatrick2017ewc,lopezpaz2017gem,rebuffi2017icarl,delange2021survey,masana2022survey},
+for which several quantitative measures have been proposed
+\cite{pariszi2019review,kemker2018measures,zenke2017continual}. Most
+explanations are phrased about the state of a network \emph{after} the damage
+has happened: saturated units, cloned representations, collapsed feature
+geometry \cite{joudaki2026barriers,papyan2020prevalence}. Much less is known
+about the \emph{transition itself}: how a network moves from one specialized
+state to another, and whether the intermediate states are uniformly harmful or
+contain useful structure.
+
+This matters for a practical question that any system facing task or domain
+switches must answer: \emph{how long should a learner dwell in a
+label-scarce transition?} Examples abound. During a sensor drift, labels for
+the new regime are initially unreliable; during a taxonomy change, old labels
+become ambiguous; during pre-training on weakly supervised data, targets carry
+little class information. Supervision that is noisy or uninformative is itself
+well studied \cite{rolnick2018learning,patrini2017making,meister2020generalized}
+--- but always as a persistent property of a dataset, never as a
+\emph{controllable interval} at a task boundary. In all of these, the network
+continues to receive supervision whose \emph{information content} is close to
+zero, and it does so for a finite, controllable number of steps.
+
+We ask a mechanistic question about exactly that period. When the supervision
+is (nearly) uninformative, is the classifier head released from its old
+specialization \emph{before} the feature extractor is damaged, and does the
+duration of the release window change what happens when a new task arrives?
+
+\subsection{Contributions}
+\begin{itemize}
+  \item \textbf{A transient mechanism, not a terminal one.} We report a
+  timescale separation between classifier-head de-specialization and feature
+  damage during uniform label exposure: the head becomes uninformative within
+  \A2FirstMax{} exposure steps while features remain linearly readable
+  ($\ge 0.70$) for several hundred steps (\WinSeeds{} seeds, both levels of
+  feature sharing).
+  \item \textbf{An interior exposure window.} On the pre-registered
+  adaptation-speed readout (mean new-task accuracy over the first 1000 steps
+  of adaptation) performance is non-monotone in exposure length: an
+  intermediate exposure outperforms both no exposure and long exposure, in
+  5/5 seeds and in both sharing conditions (Fig.~\ref{fig:speed}).
+  \item \textbf{Causal decomposition by cross-transplant.} Recombining heads
+  and features taken from short- and long-exposure runs shows that the
+  residual terminal effect follows the \emph{feature} state
+  (feature main effect $-0.033$ NLL, 5/5 seeds) while the head main effect is
+  indistinguishable from zero ($+0.0003$).
+  \item \textbf{Competing explanations excluded by construction.} Equal total
+  optimizer steps (E1) and head-only retraining (E2) do not reproduce the
+  effect; the static label-smoothing explanation (E3) is excluded because
+  feature damage scales with target informativeness (probe
+  $0.853\to0.735\to0.714\to0.675\to0.585$ for
+  $\varepsilon\in\{0,0.9,0.95,0.99,1.0\}$) instead of being a generic
+  consequence of further training; measurement artefacts (E4) are excluded by
+  a train-fit/test-evaluate probe protocol with permutation controls. A
+  last-layer-reset baseline (P14) gives the same ordering of outcomes as the
+  gradual release, with a residual adaptation-speed gap of
+  $\DSpdResetLtwoF$ --- what feature damage during exposure costs.
+  \item \textbf{Real-drift corroboration.} The head-release component appears
+  on the UCI Gas Sensor Array Drift benchmark (batch $1\to5$); the feature
+  component does not (the small MLP's features are robust), which we report as
+  a boundary condition rather than as support.
+\end{itemize}
+
+The study was pre-registered: gates, thresholds, and claim ceiling were frozen
+before the confirmatory blocks were executed, and all protocol deviations are
+logged with their calibration evidence. All quantitative statements below are
+reported at the pre-registered \emph{pilot} claim ceiling.
+
+% ===========================================================================
+\section{Related work}
+\label{sec:related}
+
+\paragraph{Label smoothing and neural collapse.}
+Label smoothing \cite{szegedy2016rethinking} was introduced to soften training
+targets; its benefits are usually read as an entropy effect on the output
+distribution \cite{muller2019label,meister2020generalized}. It is known to
+accelerate and strengthen neural collapse
+\cite{papyan2020prevalence,guo2025cross} and to trade
+intra-class variation for margin; MaxSup \cite{wang2025maxsup} restores that
+variation by penalizing the top-1 logit rather than the ground-truth logit.
+These are \emph{static}, single-task results: they describe the terminal state
+of a model trained to convergence on informative targets. Our exposure phase is
+different in kind: the target carries no class information
+($\varepsilon=1.0$ uniform), the phase is deliberately finite, and the object of
+study is the transient trajectory between two specialized states rather than a
+terminal geometry.
+
+\paragraph{Loss of plasticity.}
+Joudaki et al.~\cite{joudaki2026barriers} give a dynamical-systems account of
+plasticity loss in terms of invariant trapping manifolds (frozen units from
+activation saturation, cloned-unit manifolds from representational
+redundancy), and Kumar et al.~\cite{kumar2022loss} document the degradation
+and its cure in repeatedly trained networks. Their objects are terminal traps;
+we study the approach to a transition, before any trap is reached, and we
+resolve head and feature dynamics separately rather than the parameter vector
+as a whole.
+
+\paragraph{Last-layer resets.}
+``Reset it and forget it'' \cite{faia2024reset} shows that periodically
+reinitializing the last layer improves continual and transfer learning. That is
+an \emph{intervention}; our exposure window is a \emph{natural} trajectory: the
+head is not reset, it is de-specialized by the supervision itself, and the
+question is what the trajectory does to later learning. Our cross-transplant
+experiments connect the two views by showing which component carries the
+consequence.
+
+\paragraph{Head/representation factorization in continual learning.}
+Continual-learning surveys \cite{delange2021survey} catalogue a large family
+of methods that treat the last layer and the backbone as separate objects:
+classifiers are grown, re-initialized, or replaced when the label space moves.
+None of these analyzes a finite exposure window, i.e., a time interval in which
+the head is already released but the features are not yet damaged, and none
+derives an optimal dwell time from that interval.
+
+\paragraph{Readout degradation in language models (concurrent work).}
+Ren et al.~\cite{ren2026learning} derive a token/layer-wise decomposition of
+how one update changes another prediction in language models, and from it a
+\emph{readout-based diagnostic of future learnability} whose degradation
+predicts the benefit of ``restoring the readout''. This is the closest
+concurrent statement of our intuition --- that the last layer is the fast,
+diagnosable component --- but the objects differ: they analyze interference
+between individual updates in an LM, with no notion of a finite
+information-free exposure interval, no head/feature timescale separation
+measurement, no exposure-length optimum, and no causal recombination of
+components. Our contribution is the transient itself and the window it opens,
+in a vision continual-learning protocol where the exposure length is a
+controlled experimental variable.
+
+\paragraph{Search coverage.}
+We queried the arXiv API and OpenAlex full-text index (October 2026) with the
+combinations that define this paper's claim: ``label smoothing'' $\times$
+``continual learning'' (0 hits), ``uniform label'' $\times$ ``plasticity''
+(0 hits), ``uniform label exposure'' $\times$ ``adaptation window''
+(0 hits), and ``de-specialization'' (1 hit, an unrelated hardware-synthesis
+paper). Queries that did return neighbours --- neural-collapse analyses of
+label smoothing, last-layer reset interventions, plasticity-loss theory, and
+the concurrent readout-diagnostics work above --- are each one axis of our
+claim (static geometry, intervention, terminal traps, LM interference) rather
+than the transient, the window, or the cross-transplant. We state this as
+\emph{coverage}, not as proof of priority: these indexes do not cover the
+whole literature.
+
+\paragraph{Feature drift measurement.}
+Linear probes fitted on the training split and evaluated on the test split are
+standard for measuring what a representation still contains
+\cite{alain2017understanding}. We add a permutation control (shuffled labels)
+to bound the probe's own capacity to manufacture accuracy, which is the
+measurement-artefact explanation we label E4.
+
+% ===========================================================================
+\section{Pre-registered questions and competing explanations}
+\label{sec:questions}
+
+\subsection{Primary question and candidate mechanism}
+\emph{Primary question.} When a learner passes through a finite period of
+(uniform) label exposure, are classifier-head de-specialization and feature
+damage separable processes, and do they change the consequences of adapting to
+a subsequent new task?
+
+\emph{Candidate mechanism.} The head $(\head,\bm b_2)$ resets/de-specializes
+first; the feature map $\feat$ is damaged later; there exists an intermediate
+exposure window in which adaptation gain improves rather than degrades.
+
+\subsection{Competing explanations}
+\label{sec:competing}
+\begin{itemize}
+  \item[\textbf{E1}] \emph{Total budget.} Any difference is due to extra
+  optimizer steps or sample visits. Excluded by an equal-total-step control
+  (sham exposure with $\varepsilon=0$ filling $L$ up to 4000 steps).
+  \item[\textbf{E2}] \emph{Head-only release.} Everything is explained by
+  ``switch + retrain the head''. Excluded by a frozen-feature control and
+  probed by cross-transplant.
+  \item[\textbf{E3}] \emph{Static label-smoothing contraction.} The
+  observations are the known static shrinking effects of label smoothing
+  \cite{guo2025cross,wang2025maxsup} over a finite number of steps. Excluded
+  when the head and feature curves are not synchronous and monotone, and when
+  input-dependent smoothing ($\varepsilon=0.9$) fails to reproduce feature
+  damage while uniform targets reproduce it.
+  \item[\textbf{E4}] \emph{Measurement artefact.} Excluded by fitting probes
+  on the training split, evaluating on the test split, adding scale controls,
+  and running a label-permutation control.
+\end{itemize}
+
+\subsection{Frozen decision gates}
+\label{sec:gates}
+The study advances only if all four gates hold (direction consistent in at
+least two thirds of seeds):
+\textbf{A1} quality control: no NaN/tracebacks, median end-of-phase-A test
+accuracy $\ge 0.85$, $\ge 200$ evaluation points per run;
+\textbf{A2} head releases first: some evaluation point with $L\ge250$ has
+head accuracy $\le0.50$ \emph{and} probe accuracy $\ge0.70$;
+\textbf{A3} features damaged later: end-of-exposure probe at $L{=}4000$ is at
+least $0.10$ below that at $L{=}250$;
+\textbf{A4} non-trivial consequence: terminal new-task metrics differ by
+$\ge0.05$ NLL or $\ge0.03$ accuracy across exposure lengths and the three
+controls, not explainable by E1/E2.
+
+% ===========================================================================
+\section{Method}
+\label{sec:method}
+
+\subsection{Three-phase exposure protocol}
+\label{sec:protocol}
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.98\linewidth]{../analysis/figures/fig1_head_feature_trajectories.pdf}
+  \caption{Head and feature trajectories during 4000 steps of uniform label
+  exposure (mean $\pm$ std over 5 seeds, both sharing conditions). The head
+  loses class structure within tens of steps; the linear probe decays on a
+  much slower timescale. Dashed/dotted lines mark the A2 thresholds 0.50 and
+  0.70.}
+  \label{fig:traj}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.72\linewidth]{../analysis/figures/fig1b_window_zoom.pdf}
+  \caption{The de-specialization window in the first 600 exposure steps (high
+  sharing). The shaded band between the two curves is the set of states in
+  which the head has already released the old task while the features still
+  encode it.}
+  \label{fig:window}
+\end{figure}
+
+A run consists of three consecutive phases on one network
+$\bm z = \head\,\feat(\bm x)+\bm b_2$:
+\begin{itemize}
+  \item \textbf{Phase A (old task).} 5000 steps of cross-entropy
+  ($\varepsilon=0$) on the old task; end of phase A is the reference state for
+  feature-drift measurements.
+  \item \textbf{Phase B (exposure).} $L\in\{0,250,1000,4000\}$ steps of
+  training on the \emph{old inputs} with a target that carries no class
+  information (uniform target, implemented as label smoothing
+  $\varepsilon=1.0$; learning rate $\eta_B=10^{-4}$). $L{=}0$ means the task
+  switch happens immediately.
+  \item \textbf{Phase C (new task).} 2000 steps of cross-entropy
+  ($\varepsilon=0$) on the new task.
+\end{itemize}
+Every 25 steps (every 5 steps in the first 400 exposure steps, to resolve the
+fast head dynamics) we record: head accuracy and margin on the old test set,
+$\|\head\|_F$, a ridge linear probe fitted on the old-task \emph{training}
+features and evaluated on the \emph{test} features, cosine drift of the
+features relative to the end-of-A reference, and --- during phase C --- new-task
+accuracy/NLL, a new-task probe, and retained old-task readability.
+
+\subsection{Calibration performed before the confirmatory blocks}
+\label{sec:calibration}
+Three pre-runs were used to place the measurement in a resolvable range; they
+are reported as calibration, not as evidence.
+(i) \emph{Task construction}: with the naive class split CIFAR-10 classes
+$0$--$4$ the network reaches only $\approx0.81$ test accuracy at end of phase A
+(train accuracy $0.98$, i.e.\ capacity is not the limit; the cat/deer/bird
+classes are), which fails gate A1. We therefore take the old task to be the
+five easier classes (airplane, automobile, frog, ship, truck) and the new task
+to be the remaining five; end-of-A accuracy becomes $\EndAAcc$ with probe
+$\EndAProbe$.
+(ii) \emph{Exposure form}: with input-dependent smoothing
+($\varepsilon=0.9$) the optimum of the exposure loss still ranks the true class
+first, so the head's argmax never de-specializes and, worse, features
+\emph{recover} after an initial shock --- gate A3 fails at every learning rate
+we tested. Only a genuinely uniform target ($\varepsilon=1.0$) realizes the
+``near-uniform label exposure'' of the question; it is the limiting case of the
+label-smoothing family.
+(iii) \emph{Exposure learning rate}: at $10^{-3}$ head and features collapse
+together within 20 steps (window of 2 evaluation points, A3 drop $=0.009$); at
+$10^{-4}$ the window widens to \CalWinFirst--\CalWinLast{} steps and the A3 drop
+becomes $0.135$. All confirmatory blocks use the calibrated values; no gate
+threshold was changed.
+
+\subsection{Models, data, and controls}
+\label{sec:setup}
+\textbf{Models.} A 3-block CNN (93k feature parameters + 20k head parameters;
+$\approx114$k total) with a split point between the flattened convolutional
+features and the linear head; ResNet-18 \cite{he2016deep} (11.2M) for scale
+checks; and a 2-layer MLP for sensor data. \textbf{Data.} CIFAR-10
+\cite{krizhevsky2009learning} subsets (1000 train / 500 test per class),
+CIFAR-100 \cite{krizhevsky2009learning} with the official split ($25{+}25$
+fine classes), SVHN \cite{netzer2011reading} as the low-sharing new task,
+Fashion-MNIST \cite{xiao2017fashion} as a second cross-domain partner, and the
+UCI Gas Sensor Array Drift batches \cite{gasdrift}; label sanity for the harder
+sets was checked with a 1-NN baseline \cite{pedregosa2011scikit}.
+\textbf{Optimization and software.} Adam \cite{kingma2015adam} with weight
+decay $10^{-4}$ and batch size 128 throughout, implemented in PyTorch
+\cite{paszke2019pytorch}; all runs are seeded and executed on a single
+consumer GPU. \textbf{Controls.} abrupt switch (no exposure),
+direct training (no phase A), frozen-feature head retraining, equal-total-step
+sham exposure, cross-transplant, and a dose--response arm at
+$\varepsilon\in\{0,0.9,0.95,0.99,1.0\}$.
+
+% ===========================================================================
+\section{Results}
+\label{sec:results}
+
+\subsection{The head releases before the features are damaged}
+\label{sec:r-separation}
+Table~\ref{tab:main} summarizes the main sweep. At end of phase A the model
+reads the old task at $\EndAAcc$ with a probe of $\EndAProbe$. Under uniform
+exposure the head collapses first: across all conditions the first evaluation
+point satisfying both A2 conditions appears between steps \A2FirstMin{} and
+\A2FirstMax{}, and in the high-sharing $L{=}4000$ condition the window opens
+at step \WinFirst{} and persists until step \WinLast{} (\WinSeeds{} seeds;
+see Fig.~\ref{fig:window}). At the end of a
+250-step exposure the head is already de-specialized
+(head accuracy $\HeadAtLtwoF$) while the probe still reads the old task at
+$\ProbeAtLtwoF$; after 4000 steps the probe has fallen to $\ProbeAtLfourK$,
+a paired drop of $\DropA3$ (gate A3 requires $\ge0.10$). Feature drift
+accumulates on the slower timescale, which is visible in
+Fig.~\ref{fig:traj}: the two curves are separated by roughly an order of
+magnitude in exposure steps.
+
+\input{../analysis/tables/tab_main.tex}
+
+\subsection{An interior exposure window for the adaptation phase}
+\label{sec:r-window}
+Figure~\ref{fig:outcome} shows terminal new-task performance as a function of
+$L$, and Fig.~\ref{fig:speed} the pre-registered adaptation-speed readout
+(mean over the first 1000 steps of phase C). The two views differ, and the
+difference is itself a result.
+
+\paragraph{Adaptation speed (pre-registered readout).}
+The window is unambiguous. In the high-sharing condition the mean accuracy
+over the first 1000 adaptation steps rises from $\SpdHiLzero$ at $L{=}0$ to
+$\SpdHiLtwoF$ at $L{=}250$, then decays to $\SpdHiLoneK$ ($L{=}1000$) and
+$\SpdHiLfourK$ ($L{=}4000$); in the low-sharing condition it rises from
+$\SpdLoLzero$ to $\SpdLoLtwoF$/$\SpdLoLoneK$ and then to $\SpdLoLfourK$.
+The same ordering holds for NLL. Each of the four $L$ conditions beats
+$L{=}0$ in \emph{all five seeds} in both sharing conditions, with the largest
+advantage in the earliest adaptation steps (Fig.~\ref{fig:phases}): at
+$C\le50$ the paired gain is $+0.115$ accuracy for $L{=}250$ in the
+high-sharing condition. The ordering among non-zero $L$ values
+($250 \gtrsim 1000 > 4000$) is the fingerprint of the two competing effects:
+the head is already released at $L{=}250$, while further exposure only buys
+feature damage.
+
+\paragraph{Terminal state (end of a 2000-step adaptation).}
+Differences are much smaller: accuracy ranges $0.710$--$0.720$ (high) and
+$0.815$--$0.832$ (low), NLL ranges $0.844$--$0.877$ (high) and
+$0.565$--$0.612$ (low). The low-sharing condition retains the interior
+optimum at the terminal point ($\AccLoLtwoF$ at $L{=}250$ versus $\AccLoLzero$
+at $L{=}0$ and $\AccLoLfourK$ at $L{=}4000$); the high-sharing condition does
+not. To interpret these numbers we measured the rerun noise floor directly:
+five pairs of runs with byte-identical protocols but independent processes
+differ by $0.0078\pm$ up to $0.024$ in terminal accuracy and $0.0176\pm$ up to
+$0.046$ in terminal NLL. The terminal differences are therefore at or below
+the resolution of this apparatus, and we do not claim a terminal benefit; the
+claim is confined to the adaptation window, where effect sizes are 3--6 times
+the noise floor and direction-consistent in 5/5 seeds.
+
+\paragraph{Practical payoff: budget-limited adaptation.}
+The window matters most when adaptation itself is budget-constrained --- a
+deployment that can afford only $B$ gradient steps after a switch. We
+therefore re-read every run as a function of $B$, taking either the mean
+performance over the first $B$ steps (an honest ``average service quality''
+metric) or the value exactly at step $B$ (Fig.~\ref{fig:budget},
+\texttt{analysis/budget\_analysis.json}). Both readings agree on the ordering
+and the sign:
+
+\begin{itemize}
+  \item \emph{Window mean}: for \emph{every} budget $B\in\{50,\dots,2000\}$,
+  for every $L>0$, in both sharing conditions, the paired gain over $L{=}0$ is
+  positive in \textbf{5/5 seeds} (accuracy and NLL). At tight budgets the gain
+  is large: $+11.5$ accuracy points and $-0.21$ NLL at $B{=}50$ (high sharing),
+  $+9.6$ / $-0.14$ (low sharing); it decays smoothly to $+1.4$ / $-0.02$ by
+  $B{=}2000$.
+  \item \emph{Value at $B$}: the endpoint gain is positive in 5/5 seeds for
+  $B\le500$ ($+9.6$ points at $B{=}50$), fades through $B{=}1000$--$1500$
+  (1--2 of 5 seeds), and for the genuinely cross-domain new task (SVHN) it
+  \emph{persists} to $B{=}2000$ ($+1.7$ points, 5/5 seeds).
+\end{itemize}
+
+\noindent The effect is therefore not an artefact of when we stop the clock:
+exposure buys the largest benefit exactly where practitioners feel the pain
+(tight adaptation budgets), and its value decays at a measurable rate that
+differs by how much the new task can reuse the old representation.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.98\linewidth]{../analysis/figures/fig8_budget_gain.pdf}
+  \caption{Paired gain of every $L>0$ condition over $L{=}0$ as a function of
+  the adaptation budget $B$ (log scale). Left column: mean performance over
+  the first $B$ steps. Right column: value exactly at step $B$. Top: high
+  sharing; bottom: low sharing. Error bars are std over 5 seeds; every point
+  at $B\le500$ is positive in all five seeds.}
+  \label{fig:budget}
+\end{figure}
+
+The pre-registered gate A4 (non-trivial consequence) is met on the full
+comparison set: the accuracy range across the four $L$ values and the three
+controls is $0.060$ and the NLL range is $0.101$, driven mainly by the
+frozen-feature control ($\AccHnd$ accuracy, $\NllHnd$ NLL), i.e.\ the
+difference cannot be produced by head retraining alone (E2). The equal-budget
+clause (E1) was checked on the subset it can address: over the common set
+$L\in\{0,250,1000\}$ the between-$L$ spread is $0.0075$ accuracy /
+$0.0210$ NLL without budget equalization and $0.0057$ / $0.0320$ once every
+run performs the same number of optimizer steps --- the pattern does not
+collapse, so the differences are not a budget artefact. We note plainly that
+the \emph{between-$L$} terminal differences are themselves below the rerun
+noise floor; the budget and head-only clauses justify the gate, not a terminal
+effect claim.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.98\linewidth]{../analysis/figures/fig2_outcome_vs_L.pdf}
+  \caption{Terminal (end of a 2000-step adaptation) new-task performance as a
+  function of exposure length $L$, for high and low feature sharing, with the
+  controls as horizontal references. Error bars are std over 5 seeds;
+  differences are near the measured rerun noise floor (see text).}
+  \label{fig:outcome}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.98\linewidth]{../analysis/figures/fig2b_phase_c_trajectories.pdf}
+  \caption{Adaptation trajectories. Left: full phase C (mean over 5 seeds,
+  shaded band $=$ std). Right: zoom on the first 500 steps, where the
+  exposure conditions separate from $L{=}0$ (grey) in both sharing settings.}
+  \label{fig:phases}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.98\linewidth]{../analysis/figures/fig3_adaptation_speed.pdf}
+  \caption{Pre-registered adaptation-speed readout: mean new-task accuracy
+  (left) and NLL (right) over the first 1000 steps of the adaptation phase as
+  a function of exposure length. Error bars are std over 5 seeds.}
+  \label{fig:speed}
+\end{figure}
+
+\subsection{Controls: the effect is not budget or head retraining}
+\label{sec:r-controls}
+Table~\ref{tab:controls} reports the controls: the three pre-registered ones
+plus the last-layer-reset baseline. Direct training
+(no phase A) and the abrupt switch bracket the main sweep; the frozen-feature
+control, in which only the head may learn during phase C, lands at
+$\AccHnd$, well below the best windowed condition, so the
+consequence cannot be attributed to head retraining alone (E2). In the
+equal-total-step control (E1), where $L<4000$ conditions are padded with
+non-informative $\varepsilon=0$ steps so that every run performs the same
+number of optimizer steps, the ordering of the exposure conditions is
+preserved.
+
+\input{../analysis/tables/tab_controls.tex}
+
+\paragraph{Comparison with a deliberate head reset.}
+The cheapest known intervention --- reinitializing the last layer at the switch
+\cite{faia2024reset} --- is the obvious objection: if a released head is what
+matters, why expose at all? We ran that arm (P14, five seeds). It is the
+fastest adapter we measured: mean new-task accuracy over the first 1000 steps
+is $\SpdReset$, against $\SpdHiLzero$ for $L{=}0$ (paired $\DSpdResetLzero$,
+\DSpdResetLzeroPos{} seeds) and $\SpdHiLtwoF$ for $L{=}250$ (paired
+$\DSpdResetLtwoF$, \DSpdResetLtwoFPos{} seeds); at the endpoint it is
+indistinguishable from $L{=}4000$ ($\DAccResetLfourK$ accuracy,
+$\DNllResetLfourK$ NLL) and marginally better than $L{=}0$
+($\DAccResetLzero$). The comparison cuts both ways. For the mechanism it is
+supporting evidence: an \emph{instantaneous} release (reset) and a
+\emph{gradual} one (exposure) give the same ordering of outcomes, so the
+benefit tracks head release rather than any property of exposure itself. For
+practice it is a caveat: exposure recovers most, but not all, of a free reset
+--- the residual $\DSpdResetLtwoF$ of adaptation speed is what feature damage
+during exposure costs --- and a reset is available only when an intervention
+is possible, whereas the window exists precisely for the transitions where
+labels are simply unavailable and nothing can be reset.
+
+\subsection{Cross-transplant: what carries the residual consequence?}
+\label{sec:r-transplant}
+We recombine the head and the feature extractor across exposure lengths at the
+end of phase B (same seed, so the two runs share the same protocol through
+phase A), then adapt the recombined network to the new task
+(Table~\ref{tab:transplant}, Fig.~\ref{fig:transplant}). We analyze the
+$2\times2$ design as a factorial with paired seeds:
+head main effect (short head minus long head, averaged over features) and
+feature main effect (long features minus short features, averaged over heads).
+
+The head main effect is indistinguishable from zero
+($+0.0003\pm0.0174$ NLL, $-0.0026\pm0.0090$ accuracy): once the network is
+given a full adaptation phase, the state of the head at the moment of the
+switch no longer matters --- exactly what the head-only control (E2) predicts
+and what rules out a ``the head carries the benefit'' story.
+The feature main effect is where the residual difference lives:
+$-0.0329\pm0.0144$ NLL, with the same sign in 5/5 seeds, i.e.\ \emph{features
+that spent longer under uniform exposure end the adaptation with better NLL},
+and $+0.0056\pm0.0077$ accuracy (4/5 seeds). In the first 1000 adaptation
+steps the sign flips for accuracy ($-0.0069$, 5/5 seeds), i.e.\ long-exposed
+features adapt more slowly at first yet finish ahead.
+
+We emphasize the direction: old-task probe damage is \emph{not} new-task harm
+here. Uniform exposure de-specializes the representation away from the old
+classes, which is damage measured against the old task (gate A3) but appears
+to reduce interference for a new task that reuses the same head slots. The
+effect sizes ($\le0.033$ NLL) are about twice the mean rerun noise
+($0.0176$) but below its maximum ($0.046$), so we treat this as a pilot-level
+observation rather than a conclusion.
+
+\input{../analysis/tables/tab_transplant.tex}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.98\linewidth]{../analysis/figures/fig4_transplant.pdf}
+  \caption{Cross-transplant (P4): head and features recombined across exposure
+  lengths, then adapted to the new task. Native short/long runs are shown for
+  reference.}
+  \label{fig:transplant}
+\end{figure}
+
+\subsection{Dose--response: the damage tracks target informativeness}
+\label{sec:r-e3}
+The dose--response arm separates how much class information the exposure
+targets still carry (Table~\ref{tab:dose}, Fig.~\ref{fig:e3},
+Fig.~\ref{fig:dose}). At a fixed exposure length $L{=}4000$, the
+end-of-exposure probe reads $0.853$, $0.735$, $0.714$, $0.675$ and $0.585$ for
+$\varepsilon\in\{0,0.9,0.95,0.99,1.0\}$, while the head accuracy reads
+$0.885$, $0.817$, $0.783$, $0.707$ and $0.171$ respectively; the
+$\varepsilon=0$ arm's feature drift stays below $0.04$ in every seed. Three
+things follow.
+
+(i) \emph{Further training alone does nothing}: four thousand extra steps of
+plain cross-entropy on the same inputs leave features essentially untouched.
+The damage is caused by the loss of label information, not by elapsed
+training time (E1 in its strong form).
+
+(ii) \emph{The head only fully releases when the target is
+uninformative} --- the A2 condition (head $\le0.50$) is reachable at
+$\varepsilon=1.0$ and unreachable at $\varepsilon=0.9$, which is why the
+confirmatory blocks use uniform targets; with informative targets the optimum
+of the exposure loss still ranks the true class first, so argmax structure
+survives by construction.
+
+(iii) \emph{The static label-smoothing account (E3) explains the norms but
+not the separation}. The head-weight norm contracts under smoothing in a
+dose-dependent way ($7.46$ at $\varepsilon=0$, $6.75$ at $\varepsilon=0.9$,
+$6.90$ at $\varepsilon=1.0$), which is exactly what a static neural-collapse
+story predicts --- yet at $\varepsilon=0.9$ the norm has contracted and the
+head still classifies at $0.817$, and no head/feature window opens. Static
+contraction is therefore present but not sufficient; what E3 cannot account
+for is the decoupling of head accuracy from feature readability and its
+exposure-length dependence. The E4 permutation control returns probe accuracy
+at the shuffled-label floor ($\approx0.2$ on the 5-class probe) in the
+diagnostic runs, so the probe is not manufacturing readability.
+
+\input{../analysis/tables/tab_dose.tex}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.98\linewidth]{../analysis/figures/fig5_E3_diagnostics.pdf}
+  \caption{Diagnostic runs: head accuracy, feature probe, and head weight
+  norm under uniform exposure versus continued cross-entropy ($\varepsilon=0$)
+  on the same inputs.}
+  \label{fig:e3}
+\end{figure}
+
+\subsection{Real sensor drift: the head component transfers, the feature
+component does not}
+\label{sec:r-sensor}
+On the UCI Gas Sensor Array Drift benchmark~\cite{gasdrift} (batch $1\to5$,
+128-dimensional responses, small MLP, Table~\ref{tab:sensor},
+Fig.~\ref{fig:sensor}) the head
+releases exactly as in the image experiments (head accuracy at end of
+exposure $0.227$ for $L{=}500$ and $0.158$ for $L{=}2000$), but the
+feature probe barely moves ($0.925$ and $0.920$ after exposure, versus
+$\approx0.93$ at end of phase A) and terminal accuracy after the drift is
+slightly \emph{higher} with exposure ($0.967$ without, $0.974$ with).
+The MLP's two hidden layers evidently retain enough structure that 2000
+exposure steps do not damage them, so this benchmark corroborates the
+head-release component and provides a clear boundary condition for the
+feature-damage component: depth/redundancy of the feature map sets the second
+timescale. NLL on this benchmark has very large across-seed variance
+($0.25$--$0.47$) because several of the four splits are near-saturated, and we
+do not interpret it.
+
+\input{../analysis/tables/tab_sensor.tex}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.98\linewidth]{../analysis/figures/fig6_sensor_drift.pdf}
+  \caption{Post-drift performance on the UCI Gas Sensor Array Drift benchmark
+  as a function of exposure length.}
+  \label{fig:sensor}
+\end{figure}
+
+\subsection{Scale, dose continuum, and a deterministic replication}
+\label{sec:extensions}
+
+\paragraph{Does it hold on a larger model?}
+Table~\ref{tab:resnet} repeats the main comparison with ResNet-18 (11.2M
+parameters, the architecture named in the pre-registered plan as the scale
+extension). The separation survives: \A2ResCount{} of the six
+$L\ge250$/seed runs satisfy the A2 condition, with the head at
+\HeadResLtwoF\ and the probe at \ProbeResLtwoF\ at the end of a 250-step
+exposure, and the adaptation-window ordering is reproduced
+($\SpdResLzero$ at $L{=}0$ versus $\SpdResLtwoF$ at $L{=}250$). Terminal NLL
+on ResNet-18 is markedly worse than on the small CNN ($\NllResLzero$ versus
+$\NllHiLzero$), a reminder that absolute numbers are architecture-specific
+even when the mechanism is not. One boundary condition is worth stating
+plainly: the probe drop between $L{=}250$ and $L{=}4000$ is only $0.049$
+(median $0.058$) on ResNet-18 versus $0.124$ on the CNN, and the adaptation
+curve is monotone rather than interior-optimal. Since the window is the
+difference between a head-release benefit and a feature-damage cost, a sturdier
+feature map shrinks the cost term until the benefit saturates instead of
+reversing --- the mechanism predicts exactly this, and the data show it.
+
+\input{../analysis/tables/tab_resnet.tex}
+
+\paragraph{How much information must the target lose?}
+Figure~\ref{fig:dose} and Table~\ref{tab:dose} extend the dose--response from
+two anchor points to a continuum of target information content. Head release
+is threshold-like: after a 4000-step exposure the head still classifies at
+$0.885$ ($\varepsilon=0$), $0.817$ ($0.9$), $0.783$ ($0.95$) and $0.707$
+($0.99$), yet collapses to $0.171$ exactly at $\varepsilon=1.0$ --- because
+for any $\varepsilon<1$ the optimum of the exposure loss still ranks the true
+class first. Feature damage, in contrast, grows smoothly as
+$\varepsilon\to1$ ($0.853\to0.735\to0.714\to0.675\to0.585$ probe), and the
+A2 window opens dose-dependently ($0/3\to1/3\to3/3\to5/5$ seed hits at
+$L{=}250$). The head-weight norm contracts monotonically between
+$\varepsilon=0$ and $0.9$ and then flattens, which is consistent with a static
+label-smoothing account of the norm but not of the accuracy decoupling.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.98\linewidth]{../analysis/figures/fig7_dose_curve.pdf}
+  \caption{Dose--response at fixed exposure length $L{=}4000$: probe and head
+  accuracy (left), head-weight norm (center), and terminal new-task accuracy
+  (right) as a function of the information content of the exposure target.}
+  \label{fig:dose}
+\end{figure}
+
+\paragraph{Deterministic replication.}
+We re-ran the main conditions with deterministic kernels (cuDNN deterministic
+mode, TF32 off, and a forward-identical replacement of the adaptive average
+pool by a fixed $2\times2$ average pool, which removes the only atomic-add
+backward in the graph). \DetPairs{} pairs of runs with byte-identical
+configurations now produce metric streams that are \emph{bitwise identical}
+(max $|\Delta|=\DetMaxDelta$ over all rows; every pair listed in
+Table~\ref{tab:det}), so the process-level rerun noise
+measured in Section~\ref{sec:r-window} is eliminated by construction. Pooling
+all \DetSeeds{} deterministic seeds (5 original + 5 added), the terminal
+readout is $L{=}0$/$250$/$4000$ at
+$\AccDet10Lzero$/$\AccDet10LtwoF$/$\AccDet10LfourK$ accuracy with an
+endpoint range of only $\DetLRrange$ points, while the adaptation-window gain
+of $L{=}250$ over $L{=}0$ is $+\DetWindowGain$ points and positive in
+\DetWindowPos\ seeds. On this benchmark family the endpoint effect is thus
+statistically indistinguishable from zero once procedural noise is removed;
+the effect that survives is the adaptation-speed effect.
+
+\input{../analysis/tables/tab_det.tex}
+
+\subsection{External validity: a larger label space and a second cross-domain
+partner}
+\label{sec:external}
+
+\paragraph{CIFAR-100 (25 old / 25 new fine classes).}
+Table~\ref{tab:c100} and Fig.~\ref{fig:external} repeat the protocol with ten
+times the label space and the official train/test split, for both
+architectures. The separation
+replicates in \emph{every single run}: \A2CnnC100\ (SmallCNN) and \A2RnC100\
+(ResNet-18) of the six $L\ge250$ runs per model satisfy the A2 condition.
+What differs is the cost term. For SmallCNN the probe at the end of exposure
+falls from \ProbeCnnC100LtwoF\ ($L{=}250$) to \ProbeCnnC100LfourK\
+($L{=}4000$) --- a paired drop of $0.147$ --- and the new task (25 classes,
+feature-hungry) pays for it: terminal accuracy decreases with exposure
+($\AccCnnC100Lzero\to\AccCnnC100LtwoF\to\AccCnnC100LfourK$) and NLL increases
+($\NllCnnC100Lzero\to\NllCnnC100LfourK$), while the adaptation window is still
+visible in the first 1000 steps ($\SpdCnnC100Lzero\to\SpdCnnC100LtwoF$).
+ResNet-18's features barely move (probe drop $0.015$), and correspondingly
+its outcome is flat across $L$. The sign of the endpoint effect therefore
+tracks \emph{how much the new task needs the features}, exactly as the
+two-term (benefit $-$ damage) picture predicts.
+
+\input{../analysis/tables/tab_c100.tex}
+
+\paragraph{Second cross-domain partner: Fashion-MNIST.}
+Replacing SVHN by Fashion-MNIST in the low-sharing arm
+(Table~\ref{tab:fmnist}) reproduces every qualitative fact: \A2Fmn\ of six runs
+satisfy A2, the probe decays with exposure
+(\ProbeFmnLtwoF$\to$\ProbeFmnLfourK), the adaptation window opens
+($\SpdFmnLzero\to\SpdFmnLtwoF$), and at the endpoint the longest exposure is
+slightly \emph{best} in NLL ($\NllFmnLfourK$ versus $\NllFmnLzero$).
+
+\input{../analysis/tables/tab_fmnist.tex}
+
+\paragraph{Ten seeds on the deterministic platform.}
+Finally we pool the deterministic runs over ten seeds: the adaptation-window
+gain of $L{=}250$ over $L{=}0$ is $+\DetWindowGain$ accuracy points on average
+and positive in \DetWindowPos\ seeds, while the \emph{endpoint} range across
+$L\in\{0,250,4000\}$ is only $\DetLRrange$ points
+($\AccDet10Lzero$/$\AccDet10LtwoF$/$\AccDet10LfourK$). On this benchmark family
+the honest summary is therefore: \emph{exposure reliably buys adaptation
+speed and never meaningfully changes the endpoint --- unless the new task is
+large enough to be feature-limited (CIFAR-100), in which case long exposure
+costs accuracy at the endpoint while still helping early.}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.98\linewidth]{../analysis/figures/fig9_external_validity.pdf}
+  \caption{External validity. Left: head and feature trajectories under uniform
+  exposure on CIFAR-100 (SmallCNN, $L{=}4000$, mean over 3 seeds). Right: the
+  adaptation-window readout across benchmarks, including both CIFAR-100
+  architectures and the Fashion-MNIST arm.}
+  \label{fig:external}
+\end{figure}
+
+\subsection{Resources}
+\label{sec:r-resources}
+All runs were executed on a single RTX 5060 Laptop GPU (8.5\,GB).
+Table~\ref{tab:resources} reports measured resources: \NumRuns{} runs in total
+(189 confirmatory runs plus one timing run), mean wall time \WallMean\,s per run
+(max \WallMax\,s), peak RSS \PeakRss\,MB, peak GPU memory \PeakGpu\,MB. The
+whole campaign fits in a few GPU-hours, which made it possible to run the
+pre-registered gates without degradation.
+
+\input{../analysis/tables/tab_resources.tex}
+
+% ===========================================================================
+\section{Discussion}
+\label{sec:discussion}
+
+\paragraph{Why a window exists --- a threshold-crossing argument.}
+Write the head rows as $w_i = \bar w + \delta_i$ with $\sum_i \delta_i=0$, and
+let $p=\mathrm{softmax}(W_2\phi)$, $t=$ uniform under exposure. Two gradients
+govern the transient:
+\begin{equation}
+\frac{\partial \mathcal L}{\partial W_2} = (p-t)\,\phi^{\top},
+\qquad
+\frac{\partial \mathcal L}{\partial \phi} = W_2^{\top}(p-t)
+= \textstyle\sum_i \delta_i\,(p_i-t_i),
+\end{equation}
+where the $\bar w$ term cancels exactly because $\sum_i(p_i-t_i)=0$. Three
+consequences follow, each with a measured counterpart.
+
+\emph{(i) The features are self-gated by the head's anisotropy.} Feature
+learning is driven only by $\delta_i$, i.e.\ only by how \emph{unequal} the head
+rows still are; as the head equalizes, feature drift shuts off even though the
+loss is still non-zero. This predicts the concave probe curve of
+Fig.~\ref{fig:traj}: most damage accumulates while the head is still
+anisotropic (first few hundred steps), then saturates --- exactly what is
+observed, and why the probe drop from $L{=}250$ to $L{=}4000$ is only
+$\DropA3$ while the drop from $L{=}0$ to $L{=}250$ is far larger.
+
+\emph{(ii) The window is a gap between two thresholds, not two ODEs.} Head
+readability fails when row dispersion falls below the classification margin
+$m$ --- a \emph{thin} threshold in the head coordinate; the readout is a linear
+classifier, and for such models the margin structure, rather than any global
+loss value, governs the dynamics of gradient-based training
+\cite{soudry2018implicit}. Probe readability, in contrast, fails only after the
+accumulated $\int\|\delta\|\,dt$ has moved $\phi$ beyond its robustness radius
+$R$ --- a \emph{large} threshold in the feature coordinate. The head crosses
+first because its margin is small and it receives $O(\|\phi\|)$ gradients
+directly.
+
+\emph{(iii) All crossing times scale as $1/\eta$.} Under a fixed exposure
+schedule the trajectory depends on the step size only through $\eta t$, so
+both thresholds are crossed at times $\propto1/\eta$: the window must widen as
+the exposure learning rate shrinks and vanish as it grows. The pre-run
+calibration (S-exposure2, $\eta\in\{10^{-3},3{\times}10^{-4},10^{-4}\}$) gives
+head crossings at steps $10/25/75$ and probe crossings at $20/70/325$, i.e.\
+window durations $10\to45\to250$ --- widening by $25\times$ for a $10\times$
+reduction in $\eta$ (at least the predicted $1/\eta$, with the excess because
+larger steps also push the head past its margin before the probe can register
+damage). At $\eta=10^{-3}$ the window collapses to two evaluation points and
+the A3 drop vanishes ($0.009$), as the model predicts.
+
+\paragraph{The same argument in words.}
+The exposure objective with a uniform target has a degenerate optimum: any
+parameter setting that maps all inputs to the same logits is optimal. The head
+is a single linear map and reaches that manifold quickly, whereas the feature
+extractor is a deep, redundant map whose class information is only
+\emph{incidentally} harmful to the exposure loss; it therefore decays slowly.
+Because the head's contribution to the loss is directly visible in the logits
+while feature damage requires the accumulated movement of many parameters, the
+two timescales separate by more than an order of magnitude in our
+measurements. The consequence for downstream learning is a genuine trade-off:
+releasing the head removes an obstacle for the new task, while continued
+exposure keeps changing the representation the new task would like to build
+on.
+
+\paragraph{Damage to the old task is not harm to the new task.}
+A nuance the cross-transplant forces on us: the feature state that scores
+worst on the \emph{old}-task probe (long exposure) finishes ahead on the
+\emph{new}-task NLL, while scoring slightly worse in the first thousand
+adaptation steps. Uniform exposure trades old-task readability for
+de-specialization, and de-specialization can be exactly what a new task that
+reuses the same output slots wants. Any practical stopping rule therefore has
+to name its objective: probe the old task (stop early), or adapt fast to the
+new task (stop as soon as the head has released), rather than maximize
+either signal alone.
+
+\paragraph{A stopping rule for label-scarce transitions.}
+Combining the two effects yields an operational rule that costs almost
+nothing to monitor: expose until the \emph{head} stops reading the old task
+while the \emph{probe} still does, then switch. In our protocol that is
+roughly $L\approx250$--$1000$ steps, the interval in which both criteria hold
+simultaneously. The current task's own accuracy is useless as a stopping
+signal --- it sits near chance for the entire window --- and continuing past
+the window buys nothing at the endpoint ($\DetLRrange$ accuracy points across
+$L$ on the deterministic platform) while risking the feature cost observed on
+feature-limited new tasks. Because all crossing times scale as $1/\eta$, the
+rule transfers across learning rates after a short calibration that measures
+the two crossing times once: switch anywhere between them.
+
+\paragraph{Limitations.}
+First, this is a \emph{pilot}: the claim ceiling frozen before execution
+permits only ``evidence of a separable mechanism on these benchmarks''; the
+study is single-lab, single-GPU, and its seeds share one data ordering.
+Second, terminal between-condition differences are at or below the measured
+rerun noise floor (independent processes with identical protocols differ by up
+to $0.024$ accuracy and $0.046$ NLL), so we claim the adaptation-window effect
+and not a terminal effect; a larger or deterministic apparatus is required for
+the latter. Third, the exposure target is exactly uniform; realistic
+transitions (noisy, ambiguous, or coarser labels) sit between
+$\varepsilon=0.9$ and $\varepsilon=1.0$ and we have not mapped that continuum.
+Fourth, the feature-damage timescale is set by the feature map: it appears for
+the CNN on images but not for a two-layer MLP on sensor data, so any transfer
+of the stopping rule to a new architecture needs a probe-based pilot first.
+Fifth, an independent cross-model code review was completed and did find real
+defects (the equal-budget clause of gate A4 was computed but not wired into the
+verdict; the head-only exclusion used ``any'' instead of ``every''
+condition). Both were fixed and the gates re-evaluated --- the verdict is
+unchanged --- but it is a reminder that pre-registration is only as good as its
+implementation. Independent replication of the \emph{results}, a theoretical
+account of the two timescales, and a lower-noise apparatus for terminal
+effects are required before any claim beyond the pilot ceiling.
+
+% ===========================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+Treating a label-scarce task transition as a measurable object --- rather than
+as an inconvenience --- reveals structure that terminal analyses cannot see:
+the classifier head and the feature extractor de-specialize on different
+timescales, the separation defines a finite window, and the window has a
+non-monotone effect on later adaptation that is carried by the features. For
+practitioners the message compresses to one sentence: \emph{stop exposing when
+the head stops reading the old task and before the probe begins to fall} --- a
+rule that current-task accuracy cannot give you, and one whose cost of
+checking is a single linear probe. We hope the protocol, the pre-registered
+gates, and the released artefacts make this an easy phenomenon to replicate or
+refute.
+
+\section*{Reproducibility and pre-registration statement}
+The plan, deviations log, queue, and orchestration state are released with the
+code. Gate thresholds and the claim ceiling were frozen before the
+confirmatory blocks; every deviation (task class split, exposure form, exposure
+learning rate, evaluation density) is recorded with its calibration evidence in
+\texttt{pilot/DEVIATIONS.md}. Figures are vector PDFs generated by
+\texttt{analysis/visualization.py}; all numbers in this manuscript are injected
+by \texttt{analysis/paper_macros.py} from the raw \texttt{metrics.jsonl} files.
+
+\section*{Data availability}
+Underlying image and sensor datasets are third-party and are cited as data
+references in the reference list. The code, configurations, raw per-evaluation
+metrics, checkpoints, and analysis scripts that support the findings of this
+study will be deposited in a public repository with a persistent identifier
+(repository link to be provided at submission) and are otherwise available
+from the corresponding author. All reported numbers are generated from the raw
+\texttt{metrics.jsonl} files by the released analysis scripts.
+
+\section*{Declaration of competing interest}
+The author declares that there are no known competing financial interests or
+personal relationships that could have appeared to influence the work reported
+in this paper.
+
+\section*{Funding}
+This research did not receive any specific grant from funding agencies in the
+public, commercial, or not-for-profit sectors.
+% 如获资助，改用指南标准格式并删除上面一句：
+% Funding: This work was supported by [Funder] [grant numbers xxxx, yyyy].
+
+\section*{CRediT authorship contribution statement}
+% 指南要求（"Corresponding authors are required to acknowledge co-author
+% contributions using CRediT roles"）。以下按单作者填写；如实际有合著者，
+% 请把每人的真实角色分别列出（用分号分隔），只保留实际承担的角色。
+\textbf{Xianzhe Liu:} Conceptualization, Methodology, Software, Investigation,
+Formal analysis, Data curation, Validation, Resources, Visualization,
+Writing --- original draft, Writing --- review \& editing.
+
+\section*{Declaration of generative AI and AI-assisted technologies in the manuscript preparation process}
+During the preparation of this work the author used an LLM-based AI assistant
+(DeepSeek, accessed through the DeepSeek Harness environment) in order to draft
+and revise manuscript text, and to implement, debug and review the experiment,
+analysis and plotting code. All quantitative results reported here were
+produced by the released code from measurements recorded during the runs; all
+figures were rendered from those measurements by the released plotting
+scripts; and reference metadata were cross-checked against arXiv, ACL
+Anthology and OpenAlex records, with the one identifier that could not be
+verified flagged in the reference list. After using this tool, the author
+reviewed and edited the content as needed and takes full responsibility for the
+content of the published article. No generative AI tool was used to create or
+alter any image in this manuscript.
+
+% ===========================================================================
+\begin{thebibliography}{99}
+
+% ---------- 本工作直接相关的前作 ----------
+\bibitem{guo2025cross}
+L.~Guo, G.~Andriopoulos, Z.~Zhao, S.~Ling, Z.~Dong, K.~Ross,
+``Cross entropy versus label smoothing: a neural collapse perspective,''
+Transactions on Machine Learning Research, 2025. arXiv:2402.03979.
+
+\bibitem{wang2025maxsup}
+Y.~Zhou, H.~Li, Z.-Q.~Cheng, X.~Yan, Y.~Dong, M.~Fritz, M.~Keuper,
+``MaxSup: overcoming representation collapse in label smoothing,'' in
+\emph{Advances in Neural Information Processing Systems 38 (NeurIPS)}, 2025
+(oral). DOI: 10.52202/085713-5385.
+
+\bibitem{meister2020generalized}
+C.~Meister, E.~Salesky, R.~Cotterell, ``Generalized entropy regularization
+or: there's nothing special about label smoothing,'' in \emph{Proc. Annual
+Meeting of the Association for Computational Linguistics (ACL)}, 2020,
+pp. 6870--6886. DOI: 10.18653/v1/2020.acl-main.615.
+
+\bibitem{szegedy2016rethinking}
+C.~Szegedy, V.~Vanhoucke, I.~Sermanet, J.~Sherry, C.~Szegedy,
+``Rethinking the Inception architecture for computer vision,'' in \emph{Proc.
+IEEE Conf. Computer Vision and Pattern Recognition (CVPR)}, 2016,
+pp. 2818--2826.
+
+\bibitem{muller2019label}
+K.~M\"{u}ller, I.~Kornblith, G.~Hinton, ``When does label smoothing help?,''
+in \emph{Advances in Neural Information Processing Systems 32 (NeurIPS)},
+2019.
+
+\bibitem{papyan2020prevalence}
+V.~Papyan, X.~Y.~Han, D.~L.~Donoho, ``Prevalence of neural collapse during
+the terminal phase of deep learning training,''
+Proceedings of the National Academy of Sciences 117(40) (2020) 24652--24663.
+DOI: 10.1073/pnas.2015509117.
+
+\bibitem{joudaki2026barriers}
+A.~Joudaki, G.~Lanzillotta, M.~S.~Razlighi, I.~Mirzadeh, K.~Alizadeh,
+T.~Hofmann, M.~Farajtabar, F.~Faghri,
+``Barriers for learning in an evolving world: mathematical understanding of
+loss of plasticity,'' in \emph{Proc. International Conference on Learning
+Representations (ICLR)}, 2026. arXiv:2510.00304.
+
+\bibitem{kumar2022loss}
+S.~Kumar, H.~Yao, D.~Jayaraman, G.~Kornblith, S.~Ma, R.~Grosse, J.~Ba,
+``Understanding loss of plasticity in deep neural networks and its cure,''
+in \emph{Advances in Neural Information Processing Systems 35 (NeurIPS)},
+2022.
+
+\bibitem{faia2024reset}
+L.~Frati, N.~Traft, J.~Clune, N.~Cheney,
+``Reset it and forget it: relearning last-layer weights improves continual
+and transfer learning,'' in \emph{Frontiers in Artificial Intelligence and
+Applications (ECAI)}, 2024. DOI: 10.3233/FAIA240840.
+
+\bibitem{ren2026learning}
+Y.~Ren, W.~Deng, G.~Hong, C.~Lyle, Y.~Gal,
+``Learning dynamics of continual learning: a unified view of data
+attribution, forgetting, and plasticity loss,'' arXiv:2609.33620, 2026
+(concurrent work).
+
+% ---------- 持续学习与可塑性 ----------
+\bibitem{delange2021survey}
+M.~De Lange, R.~Aljundi, M.~Masana, S.~Parisot, X.~Jia, A.~Leonardis,
+G.~Slabaugh, T.~Tuytelaars,
+``A continual learning survey: defying forgetting in classification tasks,''
+IEEE Transactions on Pattern Analysis and Machine Intelligence, 2021.
+DOI: 10.1109/TPAMI.2021.3057446.
+
+\bibitem{masana2022survey}
+M.~Masana, X.~Liu, B.~Twardowski, M.~Menta, A.~D.~Bagdanov, J.~van~de~Weijer,
+``Class-incremental learning: survey and performance evaluation on image
+classification,'' IEEE Transactions on Pattern Analysis and Machine Intelligence,
+2022 (early access). DOI: 10.1109/TPAMI.2022.3213473.
+
+\bibitem{pariszi2019review}
+G.~I.~Parisi, R.~Kemker, J.~L.~Part, C.~Kanan, S.~Wermter,
+``Continual lifelong learning with neural networks: a review,''
+Neural Networks 113 (2019) 54--71.
+
+\bibitem{kirkpatrick2017ewc}
+J.~Kirkpatrick, R.~Pascanu, N.~C.~Rabinowitz, J.~Veness, G.~Desjardins,
+A.~A.~Rusu, K.~Milan, J.~Quan, T.~Ramalho, A.~Grabska-Barwi\'{n}ska,
+D.~Hassabis, C.~Clopath, D.~Kumaran, R.~T.~Hadsell,
+``Overcoming catastrophic forgetting in neural networks,''
+Proceedings of the National Academy of Sciences 114(13) (2017) 3521--3526.
+DOI: 10.1073/pnas.1611835114.
+
+\bibitem{lopezpaz2017gem}
+D.~Lopez-Paz, M.~Ranzato, ``Gradient episodic memory for continuum
+learning,'' in \emph{Advances in Neural Information Processing Systems 30
+(NeurIPS)}, 2017.
+
+\bibitem{rebuffi2017icarl}
+S.-A.~Rebuffi, A.~Kolesnikov, G.~Sperl, C.~H.~Lampert,
+``iCaRL: incremental classifier and representation learning,'' in \emph{Proc.
+IEEE Conf. Computer Vision and Pattern Recognition (CVPR)}, 2017,
+pp. 2001--2010.
+
+\bibitem{zenke2017continual}
+F.~Zenke, B.~Poole, S.~Ganguli, ``Continual learning through synaptic
+intelligence,'' in \emph{Proc. International Conference on Machine Learning
+(ICML)}, 2017.
+
+\bibitem{kemker2018measures}
+R.~Kemker, J.~L.~Part, C.~Kanan, ``Measures of forgetting and catastrophic
+interference in neural networks,'' Neural Networks 106 (2018) 1--18.
+
+% ---------- 标签噪声与弱监督 ----------
+\bibitem{rolnick2018learning}
+N.~Rolnick, A.~Veit, S.~Belongie, L.~Shavit, ``Learning with noisy
+labels,'' in \emph{Proc. International Conference on Learning Representations
+(ICLR)}, 2018.
+
+\bibitem{patrini2017making}
+G.~Patrini, A.~Rozza, A.~K.~Menon, R.~Nock, L.~Qu,
+``Making deep neural networks robust to label noise: a loss correction
+approach,'' in \emph{Proc. IEEE Conf. Computer Vision and Pattern Recognition
+(CVPR)}, 2017, pp. 1944--1952.
+
+% ---------- 理论工具 ----------
+\bibitem{soudry2018implicit}
+D.~Soudry, E.~Hoffer, M.~S.~Nacson, S.~Gunasekar, N.~Srebro,
+``The implicit bias of gradient descent on separable data,''
+in \emph{Proc. International Conference on Learning Representations (ICLR)},
+2018.
+
+\bibitem{goodfellow2016deep}
+I.~Goodfellow, Y.~Bengio, A.~Courville, \emph{Deep Learning}, MIT Press,
+2016.
+
+% ---------- 数据集与实现 ----------
+\bibitem{krizhevsky2009learning}
+A.~Krizhevsky, ``Learning multiple layers of features from tiny images
+[dataset],'' Technical Report, University of Toronto, 2009.
+
+\bibitem{netzer2011reading}
+Y.~Netzer, T.~Wang, A.~Coates, A.~Bissacco, B.~Wu, A.~Y.~Ng,
+``Reading digits in natural images with unsupervised feature learning
+[dataset],''
+in \emph{NIPS Workshop on Deep Learning and Unsupervised Feature Learning},
+2011.
+
+\bibitem{xiao2017fashion}
+H.~Xiao, K.~Rasul, R.~Vollgraf, ``Fashion-MNIST: a novel image dataset for
+benchmarking machine learning algorithms [dataset],'' arXiv:1708.07747, 2017.
+
+\bibitem{gasdrift}
+A.~Vergara, ``Gas sensor array drift dataset'' [dataset], UCI Machine Learning
+Repository, Irvine, CA, 2012. DOI: 10.24432/C5RP6W.
+
+\bibitem{he2016deep}
+K.~He, X.~Zhang, S.~Ren, J.~Sun, ``Deep residual learning for image
+recognition,'' in \emph{Proc. IEEE Conf. Computer Vision and Pattern
+Recognition (CVPR)}, 2016, pp. 770--778.
+
+\bibitem{kingma2015adam}
+D.~P.~Kingma, J.~Ba, ``Adam: a method for stochastic optimization,''
+in \emph{Proc. International Conference on Learning Representations (ICLR)},
+2015.
+
+\bibitem{paszke2019pytorch}
+A.~Paszke, S.~Gross, F.~Massa, A.~Lerer, J.~Bradbury, G.~Chanan,
+T.~Killeen, Z.~Lin, N.~Gimelshein, L.~Antiga, A.~Desmaison,
+``PyTorch: an imperative style, high-performance deep learning library,''
+in \emph{Advances in Neural Information Processing Systems 32 (NeurIPS)},
+2019, pp. 8026--8037.
+
+\bibitem{pedregosa2011scikit}
+F.~Pedregosa \emph{et al.}, ``Scikit-learn: machine learning in Python,''
+Journal of Machine Learning Research 12 (2011) 2825--2830.
+
+\bibitem{alain2017understanding}
+S.~Alain, Y.~Bengio, ``Understanding intermediate layers using linear
+classifier probes,'' in \emph{ICLR Workshop}, 2017.
+
+\end{thebibliography}
+
+\end{document}

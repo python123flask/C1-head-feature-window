@@ -1,0 +1,48 @@
+{
+  "status": "idle",
+  "updated_at": "2026-10-05T01:36:17+0800",
+  "counters": {
+    "planned": 5,
+    "succeeded": 5,
+    "failed": 0,
+    "blocked": 0,
+    "wall_s": 378.9
+  },
+  "events": [
+    {
+      "ts": "2026-10-05T01:29:59+0800",
+      "event": "batch_start",
+      "detail": "blocks=['P4-intervention'] n=5 shard=0/2"
+    },
+    {
+      "ts": "2026-10-05T01:31:04+0800",
+      "event": "run_done",
+      "detail": "P4_headShort_featLong_s42=succeeded ok=1 fail=0"
+    },
+    {
+      "ts": "2026-10-05T01:32:06+0800",
+      "event": "run_done",
+      "detail": "P4_headShort_featLong_s123=succeeded ok=2 fail=0"
+    },
+    {
+      "ts": "2026-10-05T01:33:31+0800",
+      "event": "run_done",
+      "detail": "P4_headShort_featLong_s456=succeeded ok=3 fail=0"
+    },
+    {
+      "ts": "2026-10-05T01:34:56+0800",
+      "event": "run_done",
+      "detail": "P4_headShort_featLong_s789=succeeded ok=4 fail=0"
+    },
+    {
+      "ts": "2026-10-05T01:36:17+0800",
+      "event": "run_done",
+      "detail": "P4_headShort_featLong_s1024=succeeded ok=5 fail=0"
+    },
+    {
+      "ts": "2026-10-05T01:36:17+0800",
+      "event": "batch_end",
+      "detail": "ok=5 fail=0 blocked=0"
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "run_id": "S_exp2_eps1_lr0.001",
+  "block": "S-exposure2",
+  "mode": "main",
+  "seed": 42,
+  "L": 4000,
+  "shared": "high",
+  "status": "succeeded",
+  "params": {
+    "features": 93248,
+    "head": 20490,
+    "total": 113738
+  },
+  "tasks": {
+    "old": {
+      "name": "cifar10_old",
+      "kind": "image",
+      "n_train": 5000,
+      "n_test": 2500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 10,
+      "train_per_class": [
+        1000,
+        1000,
+        0,
+        0,
+        0,
+        0,
+        1000,
+        0,
+        1000,
+        1000
+      ],
+      "test_per_class": [
+        500,
+        500,
+        0,
+        0,
+        0,
+        0,
+        500,
+        0,
+        500,
+        500
+      ]
+    },
+    "new": {
+      "name": "cifar10_new",
+      "kind": "image",
+      "n_train": 5000,
+      "n_test": 2500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 10,
+      "train_per_class": [
+        1000,
+        1000,
+        1000,
+        1000,
+        1000
+      ],
+      "test_per_class": [
+        500,
+        500,
+        500,
+        500,
+        500
+      ]
+    }
+  },
+  "loss_A": 0.30102379612326624,
+  "loss_B": 2.3135097510814666,
+  "final": {
+    "n_points": 400,
+    "acc_old_cur": 0.20999999344348907,
+    "acc_old_probe": 0.47802734375,
+    "W2_norm": 3.9325695037841797,
+    "feat_drift": 0.9901803135871887,
+    "end_B_acc_old_probe": 0.47802734375,
+    "end_B_acc_old_cur": 0.20999999344348907,
+    "end_B_W2_norm": 3.9325695037841797,
+    "end_B_feat_drift": 0.9901803135871887,
+    "end_B_margin_old": -0.0030281173530966043,
+    "end_A_acc": 0.8747999668121338,
+    "end_A_probe": 0.84814453125
+  },
+  "error": null,
+  "wall_s": 66.49,
+  "rss_peak_mb": NaN,
+  "gpu_peak_mb": 571.4,
+  "device": "cuda"
+}

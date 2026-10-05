@@ -1,0 +1,108 @@
+{
+  "run_id": "P4_headShort_featLong_s789",
+  "block": "P4-intervention",
+  "mode": "transplant",
+  "seed": 789,
+  "L": 1000,
+  "shared": "high",
+  "status": "succeeded",
+  "params": {
+    "features": 93248,
+    "head": 20490,
+    "total": 113738
+  },
+  "tasks": {
+    "old": {
+      "name": "cifar10_old",
+      "kind": "image",
+      "n_train": 5000,
+      "n_test": 2500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 10,
+      "train_per_class": [
+        1000,
+        1000,
+        0,
+        0,
+        0,
+        0,
+        1000,
+        0,
+        1000,
+        1000
+      ],
+      "test_per_class": [
+        500,
+        500,
+        0,
+        0,
+        0,
+        0,
+        500,
+        0,
+        500,
+        500
+      ]
+    },
+    "new": {
+      "name": "cifar10_new",
+      "kind": "image",
+      "n_train": 5000,
+      "n_test": 2500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 10,
+      "train_per_class": [
+        1000,
+        1000,
+        1000,
+        1000,
+        1000
+      ],
+      "test_per_class": [
+        500,
+        500,
+        500,
+        500,
+        500
+      ]
+    }
+  },
+  "transplant": {
+    "head_from": "C:\\Users\\lenovo\\Desktop\\project\\results\\runs\\P1_main_high_L250_s789\\checkpoints\\end_B.npz",
+    "feat_from": "C:\\Users\\lenovo\\Desktop\\project\\results\\runs\\P1_main_high_L4000_s789\\checkpoints\\end_B.npz"
+  },
+  "loss_C": 0.6671998887658119,
+  "freeze_features_C": false,
+  "final": {
+    "n_points": 80,
+    "acc_old_cur": 0.17159999907016754,
+    "acc_old_probe": 0.7734375,
+    "new_task_acc": 0.7152000069618225,
+    "new_task_NLL": 0.8660339713096619,
+    "W2_norm": 7.4870476722717285,
+    "feat_drift": 0.0,
+    "end_C_new_task_acc": 0.7152000069618225,
+    "end_C_new_task_NLL": 0.8660339713096619,
+    "end_C_acc_new_probe": 0.62646484375,
+    "end_C_acc_old_probe": 0.7734375
+  },
+  "error": null,
+  "wall_s": 84.94,
+  "rss_peak_mb": 1904.3,
+  "gpu_peak_mb": 587.4,
+  "device": "cuda"
+}

@@ -1,0 +1,98 @@
+{
+  "run_id": "S_calib2_resnet18_A10000",
+  "block": "S-calib2",
+  "mode": "main",
+  "seed": 42,
+  "L": 0,
+  "shared": "high",
+  "status": "succeeded",
+  "params": {
+    "features": 11176512,
+    "head": 12825,
+    "total": 11189337
+  },
+  "tasks": {
+    "old": {
+      "name": "cifar100_old",
+      "kind": "image",
+      "n_train": 2500,
+      "n_test": 500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 25,
+      "train_per_class": [
+        500,
+        500,
+        0,
+        0,
+        0,
+        0,
+        500,
+        0,
+        500,
+        500
+      ],
+      "test_per_class": [
+        100,
+        100,
+        0,
+        0,
+        0,
+        0,
+        100,
+        0,
+        100,
+        100
+      ]
+    },
+    "new": {
+      "name": "cifar100_new",
+      "kind": "image",
+      "n_train": 2500,
+      "n_test": 500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 25,
+      "train_per_class": [
+        500,
+        500,
+        500,
+        500,
+        500
+      ],
+      "test_per_class": [
+        100,
+        100,
+        100,
+        100,
+        100
+      ]
+    }
+  },
+  "loss_A": 0.057334878356801344,
+  "final": {
+    "n_points": 400,
+    "acc_old_cur": 0.9240000247955322,
+    "acc_old_probe": 0.9180000424385071,
+    "W2_norm": 4.198049068450928,
+    "end_A_acc": 0.9240000247955322,
+    "end_A_probe": 0.9180000424385071
+  },
+  "error": null,
+  "wall_s": 165.01,
+  "rss_peak_mb": 2013.1,
+  "gpu_peak_mb": 517.6,
+  "device": "cuda"
+}

@@ -1,0 +1,16 @@
+# Python 环境与第三方数据（体积大、有独立来源与许可证，用脚本重新抓取）
+.venv/
+data/
+__pycache__/
+*.pyc
+
+# 检查点（2.1 GB；复现任何数字都不需要，可在本机按需重新生成）
+results/runs/*/checkpoints/
+
+# Zenodo 打包产物（由 tools/make_release.py 生成，避免与仓库内容重复）
+release/
+
+# 临时/杂项
+*.part
+*.tmp
+.DS_Store

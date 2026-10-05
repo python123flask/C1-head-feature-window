@@ -1,0 +1,380 @@
+[2026-10-04 23:27:40] S_exposure_eps0.9 FAILED
+Traceback (most recent call last):
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 155, in run_experiment
+    _run(config, run_dir, device, summary)
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 262, in _run
+    rec = evaluate(model, ctx, device, "B", phase_step, gstep,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 90, in evaluate
+    cos = F.cosine_similarity(Fte.flatten(1), ctx.ref.flatten(1), dim=1)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: The size of tensor a (2048) must match the size of tensor b (2500) at non-singleton dimension 0
+
+[2026-10-04 23:27:40] S_exposure_eps0.9 failed wall=24.7s
+[2026-10-04 23:28:02] S_exposure_eps1 FAILED
+Traceback (most recent call last):
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 155, in run_experiment
+    _run(config, run_dir, device, summary)
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 262, in _run
+    rec = evaluate(model, ctx, device, "B", phase_step, gstep,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 90, in evaluate
+    cos = F.cosine_similarity(Fte.flatten(1), ctx.ref.flatten(1), dim=1)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: The size of tensor a (2048) must match the size of tensor b (2500) at non-singleton dimension 0
+
+[2026-10-04 23:28:02] S_exposure_eps1 failed wall=21.6s
+[2026-10-04 23:28:25] S_exposure_eps1_L250 FAILED
+Traceback (most recent call last):
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 155, in run_experiment
+    _run(config, run_dir, device, summary)
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 262, in _run
+    rec = evaluate(model, ctx, device, "B", phase_step, gstep,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 90, in evaluate
+    cos = F.cosine_similarity(Fte.flatten(1), ctx.ref.flatten(1), dim=1)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: The size of tensor a (2048) must match the size of tensor b (2500) at non-singleton dimension 0
+
+[2026-10-04 23:28:25] S_exposure_eps1_L250 failed wall=22.6s
+[2026-10-04 23:30:15] S_exposure_eps0.9 succeeded wall=53.0s
+[2026-10-04 23:31:05] S_exposure_eps1 succeeded wall=50.4s
+[2026-10-04 23:31:30] S_exposure_eps1_L250 succeeded wall=24.4s
+[2026-10-04 23:34:47] S_calib_lr0.001 succeeded wall=26.9s
+[2026-10-04 23:35:13] S_calib_lr0.003 succeeded wall=25.6s
+[2026-10-04 23:35:39] S_calib_lr0.0003 succeeded wall=25.9s
+[2026-10-04 23:35:53] S_smoke succeeded wall=14.5s
+[2026-10-04 23:37:11] P0_timing succeeded wall=78.3s
+[2026-10-04 23:54:26] S_exp2_eps1_lr0.001 succeeded wall=66.5s
+[2026-10-04 23:55:29] S_exp2_eps1_lr0.0003 succeeded wall=62.9s
+[2026-10-04 23:56:32] S_exp2_eps1_lr0.0001 succeeded wall=62.8s
+[2026-10-04 23:57:35] S_exp2_eps0.9_lr0.001 succeeded wall=63.1s
+[2026-10-04 23:58:38] S_exp2_eps0.9_lr0.0003 succeeded wall=62.9s
+[2026-10-04 23:59:41] S_exp2_eps0.9_lr0.0001 succeeded wall=63.0s
+[2026-10-05 00:01:52] S_smoke succeeded wall=19.3s
+[2026-10-05 00:03:16] P0_timing succeeded wall=84.0s
+[2026-10-05 00:05:54] P1_main_high_L0_s42 succeeded wall=53.2s
+[2026-10-05 00:06:46] P1_main_high_L0_s789 succeeded wall=51.9s
+[2026-10-05 00:08:10] P1_main_high_L250_s123 succeeded wall=83.7s
+[2026-10-05 00:09:10] P1_main_high_L0_s123 succeeded wall=114.7s
+[2026-10-05 00:10:39] P1_main_high_L250_s1024 succeeded wall=149.0s
+[2026-10-05 00:11:56] P1_main_high_L0_s1024 succeeded wall=165.6s
+[2026-10-05 00:12:07] P1_main_high_L0_s456 succeeded wall=172.0s
+[2026-10-05 00:14:06] P1_main_high_L1000_s456 succeeded wall=207.3s
+[2026-10-05 00:15:03] P1_main_high_L250_s456 succeeded wall=187.3s
+[2026-10-05 00:15:14] P1_main_high_L250_s42 succeeded wall=186.3s
+[2026-10-05 00:18:17] P1_main_high_L250_s789 succeeded wall=183.7s
+[2026-10-05 00:18:30] P1_main_high_L1000_s42 succeeded wall=206.4s
+[2026-10-05 00:18:40] P1_main_high_L4000_s42 succeeded wall=274.2s
+[2026-10-05 00:21:42] P1_main_high_L1000_s123 succeeded wall=204.4s
+[2026-10-05 00:21:54] P1_main_high_L1000_s789 succeeded wall=204.8s
+[2026-10-05 00:23:12] P1_main_high_L4000_s789 succeeded wall=271.4s
+[2026-10-05 00:25:04] P1_main_high_L1000_s1024 succeeded wall=201.9s
+[2026-10-05 00:26:10] P1_main_low_L0_s123 succeeded wall=178.2s
+[2026-10-05 00:26:25] P1_main_high_L4000_s123 succeeded wall=270.7s
+[2026-10-05 00:29:04] P1_main_low_L0_s1024 succeeded wall=174.5s
+[2026-10-05 00:29:37] P1_main_high_L4000_s456 succeeded wall=273.3s
+[2026-10-05 00:30:59] P1_main_high_L4000_s1024 succeeded wall=273.4s
+[2026-10-05 00:32:14] P1_main_low_L250_s456 succeeded wall=189.8s
+[2026-10-05 00:32:32] P1_main_low_L0_s42 succeeded wall=175.2s
+[2026-10-05 00:33:55] P1_main_low_L0_s456 succeeded wall=176.7s
+[2026-10-05 00:35:30] P1_main_low_L0_s789 succeeded wall=177.4s
+[2026-10-05 00:35:47] P1_main_low_L1000_s42 succeeded wall=213.0s
+[2026-10-05 00:37:08] P1_main_low_L250_s42 succeeded wall=192.3s
+[2026-10-05 00:38:40] P1_main_low_L250_s123 succeeded wall=190.6s
+[2026-10-05 00:39:21] P1_main_low_L1000_s789 succeeded wall=214.1s
+[2026-10-05 00:40:21] P1_main_low_L250_s789 succeeded wall=193.7s
+[2026-10-05 00:41:52] P1_main_low_L250_s1024 succeeded wall=191.9s
+[2026-10-05 00:43:56] P1_main_low_L1000_s123 succeeded wall=214.7s
+[2026-10-05 00:44:03] P1_main_low_L4000_s123 succeeded wall=281.9s
+[2026-10-05 00:45:25] P1_main_low_L1000_s456 succeeded wall=212.5s
+[2026-10-05 00:47:28] P1_main_low_L1000_s1024 succeeded wall=212.1s
+[2026-10-05 00:48:42] P1_main_low_L4000_s1024 succeeded wall=278.7s
+[2026-10-05 00:49:37] P1_main_low_L4000_s42 succeeded wall=252.1s
+[2026-10-05 00:50:58] P1_main_low_L4000_s456 succeeded wall=209.5s
+[2026-10-05 00:51:46] P1_main_low_L4000_s789 succeeded wall=129.0s
+[2026-10-05 00:53:21] P2_abrupt_s42 succeeded wall=52.9s
+[2026-10-05 00:54:12] P2_abrupt_s789 succeeded wall=51.1s
+[2026-10-05 00:54:25] P2_direct_s123 succeeded wall=13.3s
+[2026-10-05 00:54:46] P2_direct_s1024 succeeded wall=20.3s
+[2026-10-05 00:56:22] P2_abrupt_s123 succeeded wall=112.3s
+[2026-10-05 00:56:29] P2_headonly_s456 succeeded wall=103.2s
+[2026-10-05 00:59:04] P2_abrupt_s1024 succeeded wall=161.9s
+[2026-10-05 00:59:20] P2_abrupt_s456 succeeded wall=169.7s
+[2026-10-05 00:59:48] P2_direct_s456 succeeded wall=43.7s
+[2026-10-05 01:00:03] P2_direct_s42 succeeded wall=43.0s
+[2026-10-05 01:00:46] P2_direct_s789 succeeded wall=43.1s
+[2026-10-05 01:00:53] P3_fixedc_L0_s42 succeeded wall=263.8s
+[2026-10-05 01:02:23] P2_headonly_s42 succeeded wall=155.4s
+[2026-10-05 01:03:22] P2_headonly_s123 succeeded wall=155.9s
+[2026-10-05 01:05:00] P2_headonly_s789 succeeded wall=157.0s
+[2026-10-05 01:05:21] P3_fixedc_L250_s42 succeeded wall=268.1s
+[2026-10-05 01:05:59] P2_headonly_s1024 succeeded wall=157.2s
+[2026-10-05 01:09:32] P3_fixedc_L0_s123 succeeded wall=271.9s
+[2026-10-05 01:09:53] P3_fixedc_L1000_s42 succeeded wall=272.0s
+[2026-10-05 01:09:53] P4_headShort_featLong_s42 FAILED
+Traceback (most recent call last):
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 169, in run_experiment
+    _run(config, run_dir, device, summary)
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 251, in _run
+    model.head.load_state_dict(hs)
+  File "C:\Users\lenovo\Desktop\project\.venv\Lib\site-packages\torch\nn\modules\module.py", line 2638, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for Linear:
+	Missing key(s) in state_dict: "weight", "bias". 
+	Unexpected key(s) in state_dict: "features.0.weight", "features.0.bias", "features.3.weight", "features.3.bias", "features.6.weight", "features.6.bias", "head.weight", "head.bias". 
+
+[2026-10-05 01:09:53] P4_headShort_featLong_s42 failed wall=0.6s
+[2026-10-05 01:09:54] P4_headLong_featShort_s123 FAILED
+Traceback (most recent call last):
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 169, in run_experiment
+    _run(config, run_dir, device, summary)
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 251, in _run
+    model.head.load_state_dict(hs)
+  File "C:\Users\lenovo\Desktop\project\.venv\Lib\site-packages\torch\nn\modules\module.py", line 2638, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for Linear:
+	Missing key(s) in state_dict: "weight", "bias". 
+	Unexpected key(s) in state_dict: "features.0.weight", "features.0.bias", "features.3.weight", "features.3.bias", "features.6.weight", "features.6.bias", "head.weight", "head.bias". 
+
+[2026-10-05 01:09:54] P4_headLong_featShort_s123 failed wall=0.6s
+[2026-10-05 01:09:55] P4_headShort_featLong_s789 FAILED
+Traceback (most recent call last):
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 169, in run_experiment
+    _run(config, run_dir, device, summary)
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 251, in _run
+    model.head.load_state_dict(hs)
+  File "C:\Users\lenovo\Desktop\project\.venv\Lib\site-packages\torch\nn\modules\module.py", line 2638, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for Linear:
+	Missing key(s) in state_dict: "weight", "bias". 
+	Unexpected key(s) in state_dict: "features.0.weight", "features.0.bias", "features.3.weight", "features.3.bias", "features.6.weight", "features.6.bias", "head.weight", "head.bias". 
+
+[2026-10-05 01:09:55] P4_headShort_featLong_s789 failed wall=0.6s
+[2026-10-05 01:09:55] P4_headLong_featShort_s1024 FAILED
+Traceback (most recent call last):
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 169, in run_experiment
+    _run(config, run_dir, device, summary)
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 251, in _run
+    model.head.load_state_dict(hs)
+  File "C:\Users\lenovo\Desktop\project\.venv\Lib\site-packages\torch\nn\modules\module.py", line 2638, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for Linear:
+	Missing key(s) in state_dict: "weight", "bias". 
+	Unexpected key(s) in state_dict: "features.0.weight", "features.0.bias", "features.3.weight", "features.3.bias", "features.6.weight", "features.6.bias", "head.weight", "head.bias". 
+
+[2026-10-05 01:09:55] P4_headLong_featShort_s1024 failed wall=0.6s
+[2026-10-05 01:10:28] P3_fixedc_L0_s456 succeeded wall=268.8s
+[2026-10-05 01:14:01] P3_fixedc_L250_s123 succeeded wall=269.3s
+[2026-10-05 01:14:29] P5_diag_eps1_s456 succeeded wall=274.0s
+[2026-10-05 01:14:57] P3_fixedc_L250_s456 succeeded wall=269.3s
+[2026-10-05 01:18:34] P3_fixedc_L1000_s123 succeeded wall=272.6s
+[2026-10-05 01:18:35] P4_headLong_featShort_s42 FAILED
+Traceback (most recent call last):
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 169, in run_experiment
+    _run(config, run_dir, device, summary)
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 251, in _run
+    model.head.load_state_dict(hs)
+  File "C:\Users\lenovo\Desktop\project\.venv\Lib\site-packages\torch\nn\modules\module.py", line 2638, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for Linear:
+	Missing key(s) in state_dict: "weight", "bias". 
+	Unexpected key(s) in state_dict: "features.0.weight", "features.0.bias", "features.3.weight", "features.3.bias", "features.6.weight", "features.6.bias", "head.weight", "head.bias". 
+
+[2026-10-05 01:18:35] P4_headLong_featShort_s42 failed wall=0.6s
+[2026-10-05 01:18:35] P4_headShort_featLong_s456 FAILED
+Traceback (most recent call last):
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 169, in run_experiment
+    _run(config, run_dir, device, summary)
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 251, in _run
+    model.head.load_state_dict(hs)
+  File "C:\Users\lenovo\Desktop\project\.venv\Lib\site-packages\torch\nn\modules\module.py", line 2638, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for Linear:
+	Missing key(s) in state_dict: "weight", "bias". 
+	Unexpected key(s) in state_dict: "features.0.weight", "features.0.bias", "features.3.weight", "features.3.bias", "features.6.weight", "features.6.bias", "head.weight", "head.bias". 
+
+[2026-10-05 01:18:35] P4_headShort_featLong_s456 failed wall=0.6s
+[2026-10-05 01:18:36] P4_headLong_featShort_s789 FAILED
+Traceback (most recent call last):
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 169, in run_experiment
+    _run(config, run_dir, device, summary)
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 251, in _run
+    model.head.load_state_dict(hs)
+  File "C:\Users\lenovo\Desktop\project\.venv\Lib\site-packages\torch\nn\modules\module.py", line 2638, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for Linear:
+	Missing key(s) in state_dict: "weight", "bias". 
+	Unexpected key(s) in state_dict: "features.0.weight", "features.0.bias", "features.3.weight", "features.3.bias", "features.6.weight", "features.6.bias", "head.weight", "head.bias". 
+
+[2026-10-05 01:18:36] P4_headLong_featShort_s789 failed wall=0.6s
+[2026-10-05 01:18:58] P5_diag_eps0_s123 succeeded wall=268.6s
+[2026-10-05 01:19:27] P3_fixedc_L1000_s456 succeeded wall=270.4s
+[2026-10-05 01:19:28] P4_headShort_featLong_s123 FAILED
+Traceback (most recent call last):
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 169, in run_experiment
+    _run(config, run_dir, device, summary)
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 251, in _run
+    model.head.load_state_dict(hs)
+  File "C:\Users\lenovo\Desktop\project\.venv\Lib\site-packages\torch\nn\modules\module.py", line 2638, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for Linear:
+	Missing key(s) in state_dict: "weight", "bias". 
+	Unexpected key(s) in state_dict: "features.0.weight", "features.0.bias", "features.3.weight", "features.3.bias", "features.6.weight", "features.6.bias", "head.weight", "head.bias". 
+
+[2026-10-05 01:19:28] P4_headShort_featLong_s123 failed wall=0.6s
+[2026-10-05 01:19:29] P4_headLong_featShort_s456 FAILED
+Traceback (most recent call last):
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 169, in run_experiment
+    _run(config, run_dir, device, summary)
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 251, in _run
+    model.head.load_state_dict(hs)
+  File "C:\Users\lenovo\Desktop\project\.venv\Lib\site-packages\torch\nn\modules\module.py", line 2638, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for Linear:
+	Missing key(s) in state_dict: "weight", "bias". 
+	Unexpected key(s) in state_dict: "features.0.weight", "features.0.bias", "features.3.weight", "features.3.bias", "features.6.weight", "features.6.bias", "head.weight", "head.bias". 
+
+[2026-10-05 01:19:29] P4_headLong_featShort_s456 failed wall=0.7s
+[2026-10-05 01:19:29] P4_headShort_featLong_s1024 FAILED
+Traceback (most recent call last):
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 169, in run_experiment
+    _run(config, run_dir, device, summary)
+  File "C:\Users\lenovo\Desktop\project\experiments\pilot\sim.py", line 251, in _run
+    model.head.load_state_dict(hs)
+  File "C:\Users\lenovo\Desktop\project\.venv\Lib\site-packages\torch\nn\modules\module.py", line 2638, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for Linear:
+	Missing key(s) in state_dict: "weight", "bias". 
+	Unexpected key(s) in state_dict: "features.0.weight", "features.0.bias", "features.3.weight", "features.3.bias", "features.6.weight", "features.6.bias", "head.weight", "head.bias". 
+
+[2026-10-05 01:19:29] P4_headShort_featLong_s1024 failed wall=0.6s
+[2026-10-05 01:22:00] P7_dose_eps0.9_L250_s42 succeeded wall=181.9s
+[2026-10-05 01:23:07] P5_diag_eps1_s42 succeeded wall=271.1s
+[2026-10-05 01:24:00] P5_diag_eps1_s123 succeeded wall=270.4s
+[2026-10-05 01:26:28] P7_dose_eps0.9_L4000_s42 succeeded wall=267.8s
+[2026-10-05 01:27:07] P6_sensor_L0_s42 succeeded wall=39.1s
+[2026-10-05 01:27:19] P5_diag_eps1_s789 succeeded wall=252.4s
+[2026-10-05 01:27:46] P6_sensor_L0_s789 succeeded wall=39.5s
+[2026-10-05 01:27:53] P5_diag_eps0_s42 succeeded wall=233.0s
+[2026-10-05 01:28:29] P6_sensor_L500_s456 succeeded wall=43.1s
+[2026-10-05 01:29:24] P6_sensor_L2000_s123 succeeded wall=54.3s
+[2026-10-05 01:30:46] P5_diag_eps0_s456 succeeded wall=206.6s
+[2026-10-05 01:31:04] P4_headShort_featLong_s42 succeeded wall=65.7s
+[2026-10-05 01:31:31] P5_diag_eps0_s789 succeeded wall=218.0s
+[2026-10-05 01:32:06] P4_headShort_featLong_s123 succeeded wall=61.3s
+[2026-10-05 01:33:26] P4_headLong_featShort_s42 succeeded wall=86.8s
+[2026-10-05 01:33:31] P4_headShort_featLong_s456 succeeded wall=84.9s
+[2026-10-05 01:34:32] P7_dose_eps0.9_L250_s123 succeeded wall=225.9s
+[2026-10-05 01:34:50] P4_headLong_featShort_s123 succeeded wall=84.5s
+[2026-10-05 01:34:56] P4_headShort_featLong_s789 succeeded wall=84.9s
+[2026-10-05 01:35:32] P7_dose_eps0.9_L250_s456 succeeded wall=241.3s
+[2026-10-05 01:36:12] P4_headLong_featShort_s456 succeeded wall=81.8s
+[2026-10-05 01:36:17] P4_headShort_featLong_s1024 succeeded wall=81.8s
+[2026-10-05 01:37:15] P4_headLong_featShort_s789 succeeded wall=63.4s
+[2026-10-05 01:38:16] P4_headLong_featShort_s1024 succeeded wall=61.1s
+[2026-10-05 01:39:08] P7_dose_eps0.9_L4000_s123 succeeded wall=275.7s
+[2026-10-05 01:39:26] P7_dose_eps0.9_L4000_s456 succeeded wall=233.8s
+[2026-10-05 01:39:30] P6_sensor_L0_s123 succeeded wall=22.0s
+[2026-10-05 01:39:42] P6_sensor_L0_s456 succeeded wall=15.7s
+[2026-10-05 01:39:47] P6_sensor_L500_s42 succeeded wall=17.5s
+[2026-10-05 01:39:59] P6_sensor_L500_s123 succeeded wall=17.5s
+[2026-10-05 01:40:04] P6_sensor_L500_s789 succeeded wall=17.3s
+[2026-10-05 01:40:20] P6_sensor_L2000_s42 succeeded wall=21.3s
+[2026-10-05 01:40:26] P6_sensor_L2000_s456 succeeded wall=21.2s
+[2026-10-05 01:40:40] P6_sensor_L2000_s789 succeeded wall=19.5s
+[2026-10-05 01:42:45] P0_timing succeeded wall=85.6s
+[2026-10-05 08:13:32] P10_det_L0_s42_a succeeded wall=63.5s
+[2026-10-05 08:15:15] P10_det_L0_s42_a succeeded wall=60.8s
+[2026-10-05 08:16:15] P10_det_L0_s42_b succeeded wall=59.7s
+[2026-10-05 08:19:50] P8_resnet_L0_s42 succeeded wall=161.1s
+[2026-10-05 08:27:18] P8_resnet_L0_s123 succeeded wall=448.8s
+[2026-10-05 08:27:56] P8_resnet_L250_s42 succeeded wall=486.4s
+[2026-10-05 08:30:14] P8_resnet_L0_s456 succeeded wall=504.5s
+[2026-10-05 08:36:26] P8_resnet_L250_s123 succeeded wall=548.8s
+[2026-10-05 08:39:18] P8_resnet_L250_s456 succeeded wall=544.0s
+[2026-10-05 08:41:20] P8_resnet_L4000_s42 succeeded wall=803.5s
+[2026-10-05 08:44:29] P9_eps0.95_L250_s42 succeeded wall=189.0s
+[2026-10-05 08:48:57] P9_eps0.95_L4000_s42 succeeded wall=267.6s
+[2026-10-05 08:49:42] P8_resnet_L4000_s123 succeeded wall=796.1s
+[2026-10-05 08:51:51] P9_eps0.99_L250_s42 succeeded wall=174.7s
+[2026-10-05 08:52:23] P8_resnet_L4000_s456 succeeded wall=784.7s
+[2026-10-05 08:52:43] P9_eps0.95_L250_s123 succeeded wall=180.3s
+[2026-10-05 08:55:12] P9_eps0.95_L250_s456 succeeded wall=168.9s
+[2026-10-05 08:56:02] P9_eps0.99_L4000_s42 succeeded wall=251.0s
+[2026-10-05 08:56:56] P9_eps0.95_L4000_s123 succeeded wall=252.7s
+[2026-10-05 08:59:27] P9_eps0.95_L4000_s456 succeeded wall=255.1s
+[2026-10-05 08:59:46] P9_eps0.99_L250_s123 succeeded wall=170.8s
+[2026-10-05 08:59:51] P10_det_L250_s42_b succeeded wall=228.0s
+[2026-10-05 09:02:25] P9_eps0.99_L250_s456 succeeded wall=177.8s
+[2026-10-05 09:03:34] P10_det_L0_s123_a succeeded wall=223.5s
+[2026-10-05 09:04:19] P9_eps0.99_L4000_s123 succeeded wall=272.4s
+[2026-10-05 09:06:59] P9_eps0.99_L4000_s456 succeeded wall=274.3s
+[2026-10-05 09:07:33] P10_det_L250_s123_b succeeded wall=239.3s
+[2026-10-05 09:10:07] P10_det_L4000_s42_a succeeded wall=348.5s
+[2026-10-05 09:10:45] P10_det_L250_s42_a succeeded wall=226.1s
+[2026-10-05 09:11:03] P10_det_L0_s456_a succeeded wall=209.8s
+[2026-10-05 09:13:40] P10_det_L0_s123_b succeeded wall=212.4s
+[2026-10-05 09:14:33] P10_det_L0_s789_a succeeded wall=209.8s
+[2026-10-05 09:16:25] P10_det_L4000_s42_b succeeded wall=339.3s
+[2026-10-05 09:18:04] P10_det_L0_s1024_a succeeded wall=211.1s
+[2026-10-05 09:18:56] P10_det_L4000_s123_a succeeded wall=315.9s
+[2026-10-05 09:19:30] P10_det_L250_s123_a succeeded wall=184.9s
+[2026-10-05 09:21:28] P10_det_L250_s456_a succeeded wall=152.4s
+[2026-10-05 09:23:17] P10_det_L4000_s123_b succeeded wall=227.7s
+[2026-10-05 09:23:59] P10_det_L250_s789_a succeeded wall=151.4s
+[2026-10-05 09:26:26] P10_det_L250_s1024_a succeeded wall=146.8s
+[2026-10-05 09:26:40] P10_det_L4000_s456_a succeeded wall=202.9s
+[2026-10-05 09:28:13] P10_det_L4000_s789_a succeeded wall=92.9s
+[2026-10-05 09:30:03] P10_det_L4000_s1024_a succeeded wall=109.4s
+[2026-10-05 10:14:54] S_calib2_smallcnn_A5000 succeeded wall=29.6s
+[2026-10-05 10:15:42] S_calib2_smallcnn_A10000 succeeded wall=47.9s
+[2026-10-05 10:17:07] S_calib2_resnet18_A5000 succeeded wall=84.6s
+[2026-10-05 10:19:52] S_calib2_resnet18_A10000 succeeded wall=165.0s
+[2026-10-05 10:31:55] P11_c100_smallcnn_L0_s42 succeeded wall=37.8s
+[2026-10-05 10:32:35] P11_c100_smallcnn_L250_s42 succeeded wall=39.3s
+[2026-10-05 10:33:44] P11_c100_smallcnn_L4000_s42 succeeded wall=69.7s
+[2026-10-05 10:34:45] P11_c100_smallcnn_L0_s123 succeeded wall=85.1s
+[2026-10-05 10:36:40] P11_c100_smallcnn_L250_s123 succeeded wall=115.8s
+[2026-10-05 10:37:22] P11_c100_smallcnn_L0_s456 succeeded wall=122.7s
+[2026-10-05 10:39:10] P11_c100_resnet18_L0_s42 succeeded wall=325.9s
+[2026-10-05 10:39:28] P11_c100_smallcnn_L250_s456 succeeded wall=125.3s
+[2026-10-05 10:39:57] P11_c100_smallcnn_L4000_s123 succeeded wall=196.4s
+[2026-10-05 10:43:22] P11_c100_smallcnn_L4000_s456 succeeded wall=234.4s
+[2026-10-05 10:46:52] P11_c100_resnet18_L250_s42 succeeded wall=461.9s
+[2026-10-05 10:47:07] P11_c100_resnet18_L0_s123 succeeded wall=430.7s
+[2026-10-05 10:50:30] P11_c100_resnet18_L0_s456 succeeded wall=428.1s
+[2026-10-05 10:54:57] P11_c100_resnet18_L250_s123 succeeded wall=469.5s
+[2026-10-05 10:58:04] P11_c100_resnet18_L250_s456 succeeded wall=454.2s
+[2026-10-05 10:58:16] P11_c100_resnet18_L4000_s42 succeeded wall=684.0s
+[2026-10-05 11:01:15] P12_fmnist_L0_s42 succeeded wall=178.7s
+[2026-10-05 11:04:19] P12_fmnist_L250_s42 succeeded wall=183.9s
+[2026-10-05 11:05:56] P11_c100_resnet18_L4000_s123 succeeded wall=658.8s
+[2026-10-05 11:08:46] P12_fmnist_L0_s123 succeeded wall=170.7s
+[2026-10-05 11:08:49] P12_fmnist_L4000_s42 succeeded wall=270.2s
+[2026-10-05 11:08:54] P11_c100_resnet18_L4000_s456 succeeded wall=649.9s
+[2026-10-05 11:11:34] P12_fmnist_L0_s456 succeeded wall=159.8s
+[2026-10-05 11:11:38] P12_fmnist_L250_s123 succeeded wall=171.7s
+[2026-10-05 11:12:16] P13_detseed_L0_s2048 succeeded wall=207.1s
+[2026-10-05 11:14:25] P12_fmnist_L250_s456 succeeded wall=170.6s
+[2026-10-05 11:15:44] P13_detseed_L0_s3003 succeeded wall=207.7s
+[2026-10-05 11:15:54] P12_fmnist_L4000_s123 succeeded wall=255.8s
+[2026-10-05 11:18:37] P12_fmnist_L4000_s456 succeeded wall=252.7s
+[2026-10-05 11:19:10] P13_detseed_L0_s4096 succeeded wall=206.2s
+[2026-10-05 11:19:37] P13_detseed_L250_s2048 succeeded wall=223.2s
+[2026-10-05 11:22:39] P13_detseed_L0_s5005 succeeded wall=209.3s
+[2026-10-05 11:23:21] P13_detseed_L250_s3003 succeeded wall=223.9s
+[2026-10-05 11:24:18] P13_detseed_L4000_s2048 succeeded wall=340.1s
+[2026-10-05 11:26:10] P13_detseed_L0_s6006 succeeded wall=210.4s
+[2026-10-05 11:26:50] P13_detseed_L250_s4096 succeeded wall=208.6s
+[2026-10-05 11:28:43] P13_detseed_L4000_s3003 succeeded wall=265.8s
+[2026-10-05 11:29:21] P13_detseed_L250_s5005 succeeded wall=150.8s
+[2026-10-05 11:31:51] P13_detseed_L250_s6006 succeeded wall=150.3s
+[2026-10-05 11:32:12] P13_detseed_L4000_s4096 succeeded wall=208.7s
+[2026-10-05 11:34:12] P13_detseed_L4000_s5005 succeeded wall=119.9s
+[2026-10-05 11:36:12] P13_detseed_L4000_s6006 succeeded wall=120.5s
+[2026-10-05 14:06:57] P14_headreset_s42 succeeded wall=60.9s
+[2026-10-05 14:07:57] P14_headreset_s123 succeeded wall=60.6s
+[2026-10-05 14:08:58] P14_headreset_s456 succeeded wall=60.5s
+[2026-10-05 14:09:58] P14_headreset_s789 succeeded wall=60.4s
+[2026-10-05 14:10:59] P14_headreset_s1024 succeeded wall=60.2s

@@ -1,0 +1,393 @@
+{
+  "status": "idle",
+  "updated_at": "2026-10-05T14:10:59+0800",
+  "counters": {
+    "planned": 5,
+    "succeeded": 5,
+    "failed": 0,
+    "blocked": 0,
+    "wall_s": 302.9
+  },
+  "events": [
+    {
+      "ts": "2026-10-05T00:05:01+0800",
+      "event": "batch_start",
+      "detail": "blocks=['P1-main'] n=14 shard=0/3"
+    },
+    {
+      "ts": "2026-10-05T00:05:54+0800",
+      "event": "run_done",
+      "detail": "P1_main_high_L0_s42=succeeded ok=1 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:06:46+0800",
+      "event": "run_done",
+      "detail": "P1_main_high_L0_s789=succeeded ok=2 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:08:10+0800",
+      "event": "run_done",
+      "detail": "P1_main_high_L250_s123=succeeded ok=3 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:10:39+0800",
+      "event": "run_done",
+      "detail": "P1_main_high_L250_s1024=succeeded ok=4 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:14:06+0800",
+      "event": "run_done",
+      "detail": "P1_main_high_L1000_s456=succeeded ok=5 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:18:40+0800",
+      "event": "run_done",
+      "detail": "P1_main_high_L4000_s42=succeeded ok=6 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:23:12+0800",
+      "event": "run_done",
+      "detail": "P1_main_high_L4000_s789=succeeded ok=7 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:26:10+0800",
+      "event": "run_done",
+      "detail": "P1_main_low_L0_s123=succeeded ok=8 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:29:04+0800",
+      "event": "run_done",
+      "detail": "P1_main_low_L0_s1024=succeeded ok=9 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:32:14+0800",
+      "event": "run_done",
+      "detail": "P1_main_low_L250_s456=succeeded ok=10 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:35:47+0800",
+      "event": "run_done",
+      "detail": "P1_main_low_L1000_s42=succeeded ok=11 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:39:21+0800",
+      "event": "run_done",
+      "detail": "P1_main_low_L1000_s789=succeeded ok=12 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:44:03+0800",
+      "event": "run_done",
+      "detail": "P1_main_low_L4000_s123=succeeded ok=13 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:48:42+0800",
+      "event": "run_done",
+      "detail": "P1_main_low_L4000_s1024=succeeded ok=14 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:48:42+0800",
+      "event": "batch_end",
+      "detail": "ok=14 fail=0 blocked=0"
+    },
+    {
+      "ts": "2026-10-05T00:52:28+0800",
+      "event": "batch_start",
+      "detail": "blocks=['P2-controls', 'P3-fixedC', 'P4-intervention', 'P5-diagnostics', 'P7-dose', 'P6-sensor'] n=20 shard=0/3"
+    },
+    {
+      "ts": "2026-10-05T00:53:21+0800",
+      "event": "run_done",
+      "detail": "P2_abrupt_s42=succeeded ok=1 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:54:12+0800",
+      "event": "run_done",
+      "detail": "P2_abrupt_s789=succeeded ok=2 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:54:25+0800",
+      "event": "run_done",
+      "detail": "P2_direct_s123=succeeded ok=3 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:54:46+0800",
+      "event": "run_done",
+      "detail": "P2_direct_s1024=succeeded ok=4 fail=0"
+    },
+    {
+      "ts": "2026-10-05T00:56:29+0800",
+      "event": "run_done",
+      "detail": "P2_headonly_s456=succeeded ok=5 fail=0"
+    },
+    {
+      "ts": "2026-10-05T01:00:53+0800",
+      "event": "run_done",
+      "detail": "P3_fixedc_L0_s42=succeeded ok=6 fail=0"
+    },
+    {
+      "ts": "2026-10-05T01:05:21+0800",
+      "event": "run_done",
+      "detail": "P3_fixedc_L250_s42=succeeded ok=7 fail=0"
+    },
+    {
+      "ts": "2026-10-05T01:09:53+0800",
+      "event": "run_done",
+      "detail": "P3_fixedc_L1000_s42=succeeded ok=8 fail=0"
+    },
+    {
+      "ts": "2026-10-05T01:09:53+0800",
+      "event": "run_done",
+      "detail": "P4_headShort_featLong_s42=failed ok=8 fail=1"
+    },
+    {
+      "ts": "2026-10-05T01:09:54+0800",
+      "event": "run_done",
+      "detail": "P4_headLong_featShort_s123=failed ok=8 fail=2"
+    },
+    {
+      "ts": "2026-10-05T01:09:55+0800",
+      "event": "run_done",
+      "detail": "P4_headShort_featLong_s789=failed ok=8 fail=3"
+    },
+    {
+      "ts": "2026-10-05T01:09:55+0800",
+      "event": "run_done",
+      "detail": "P4_headLong_featShort_s1024=failed ok=8 fail=4"
+    },
+    {
+      "ts": "2026-10-05T01:14:29+0800",
+      "event": "run_done",
+      "detail": "P5_diag_eps1_s456=succeeded ok=9 fail=4"
+    },
+    {
+      "ts": "2026-10-05T01:18:58+0800",
+      "event": "run_done",
+      "detail": "P5_diag_eps0_s123=succeeded ok=10 fail=4"
+    },
+    {
+      "ts": "2026-10-05T01:22:00+0800",
+      "event": "run_done",
+      "detail": "P7_dose_eps0.9_L250_s42=succeeded ok=11 fail=4"
+    },
+    {
+      "ts": "2026-10-05T01:26:28+0800",
+      "event": "run_done",
+      "detail": "P7_dose_eps0.9_L4000_s42=succeeded ok=12 fail=4"
+    },
+    {
+      "ts": "2026-10-05T01:27:07+0800",
+      "event": "run_done",
+      "detail": "P6_sensor_L0_s42=succeeded ok=13 fail=4"
+    },
+    {
+      "ts": "2026-10-05T01:27:46+0800",
+      "event": "run_done",
+      "detail": "P6_sensor_L0_s789=succeeded ok=14 fail=4"
+    },
+    {
+      "ts": "2026-10-05T01:28:29+0800",
+      "event": "run_done",
+      "detail": "P6_sensor_L500_s456=succeeded ok=15 fail=4"
+    },
+    {
+      "ts": "2026-10-05T01:29:24+0800",
+      "event": "run_done",
+      "detail": "P6_sensor_L2000_s123=succeeded ok=16 fail=4"
+    },
+    {
+      "ts": "2026-10-05T01:29:24+0800",
+      "event": "batch_end",
+      "detail": "ok=16 fail=4 blocked=0"
+    },
+    {
+      "ts": "2026-10-05T08:17:09+0800",
+      "event": "batch_start",
+      "detail": "blocks=['P8-resnet', 'P9-eps', 'P10-det'] n=13 shard=0/3"
+    },
+    {
+      "ts": "2026-10-05T08:19:50+0800",
+      "event": "run_done",
+      "detail": "P8_resnet_L0_s42=succeeded ok=1 fail=0"
+    },
+    {
+      "ts": "2026-10-05T08:27:56+0800",
+      "event": "run_done",
+      "detail": "P8_resnet_L250_s42=succeeded ok=2 fail=0"
+    },
+    {
+      "ts": "2026-10-05T08:41:20+0800",
+      "event": "run_done",
+      "detail": "P8_resnet_L4000_s42=succeeded ok=3 fail=0"
+    },
+    {
+      "ts": "2026-10-05T08:44:29+0800",
+      "event": "run_done",
+      "detail": "P9_eps0.95_L250_s42=succeeded ok=4 fail=0"
+    },
+    {
+      "ts": "2026-10-05T08:48:57+0800",
+      "event": "run_done",
+      "detail": "P9_eps0.95_L4000_s42=succeeded ok=5 fail=0"
+    },
+    {
+      "ts": "2026-10-05T08:51:51+0800",
+      "event": "run_done",
+      "detail": "P9_eps0.99_L250_s42=succeeded ok=6 fail=0"
+    },
+    {
+      "ts": "2026-10-05T08:56:02+0800",
+      "event": "run_done",
+      "detail": "P9_eps0.99_L4000_s42=succeeded ok=7 fail=0"
+    },
+    {
+      "ts": "2026-10-05T08:59:51+0800",
+      "event": "run_done",
+      "detail": "P10_det_L250_s42_b=succeeded ok=8 fail=0"
+    },
+    {
+      "ts": "2026-10-05T09:03:34+0800",
+      "event": "run_done",
+      "detail": "P10_det_L0_s123_a=succeeded ok=9 fail=0"
+    },
+    {
+      "ts": "2026-10-05T09:07:33+0800",
+      "event": "run_done",
+      "detail": "P10_det_L250_s123_b=succeeded ok=10 fail=0"
+    },
+    {
+      "ts": "2026-10-05T09:11:03+0800",
+      "event": "run_done",
+      "detail": "P10_det_L0_s456_a=succeeded ok=11 fail=0"
+    },
+    {
+      "ts": "2026-10-05T09:14:33+0800",
+      "event": "run_done",
+      "detail": "P10_det_L0_s789_a=succeeded ok=12 fail=0"
+    },
+    {
+      "ts": "2026-10-05T09:18:04+0800",
+      "event": "run_done",
+      "detail": "P10_det_L0_s1024_a=succeeded ok=13 fail=0"
+    },
+    {
+      "ts": "2026-10-05T09:18:04+0800",
+      "event": "batch_end",
+      "detail": "ok=13 fail=0 blocked=0"
+    },
+    {
+      "ts": "2026-10-05T10:31:17+0800",
+      "event": "batch_start",
+      "detail": "blocks=['P11-c100', 'P12-fmnist', 'P13-detseed'] n=14 shard=0/3"
+    },
+    {
+      "ts": "2026-10-05T10:31:55+0800",
+      "event": "run_done",
+      "detail": "P11_c100_smallcnn_L0_s42=succeeded ok=1 fail=0"
+    },
+    {
+      "ts": "2026-10-05T10:32:35+0800",
+      "event": "run_done",
+      "detail": "P11_c100_smallcnn_L250_s42=succeeded ok=2 fail=0"
+    },
+    {
+      "ts": "2026-10-05T10:33:44+0800",
+      "event": "run_done",
+      "detail": "P11_c100_smallcnn_L4000_s42=succeeded ok=3 fail=0"
+    },
+    {
+      "ts": "2026-10-05T10:39:10+0800",
+      "event": "run_done",
+      "detail": "P11_c100_resnet18_L0_s42=succeeded ok=4 fail=0"
+    },
+    {
+      "ts": "2026-10-05T10:46:52+0800",
+      "event": "run_done",
+      "detail": "P11_c100_resnet18_L250_s42=succeeded ok=5 fail=0"
+    },
+    {
+      "ts": "2026-10-05T10:58:16+0800",
+      "event": "run_done",
+      "detail": "P11_c100_resnet18_L4000_s42=succeeded ok=6 fail=0"
+    },
+    {
+      "ts": "2026-10-05T11:01:15+0800",
+      "event": "run_done",
+      "detail": "P12_fmnist_L0_s42=succeeded ok=7 fail=0"
+    },
+    {
+      "ts": "2026-10-05T11:04:19+0800",
+      "event": "run_done",
+      "detail": "P12_fmnist_L250_s42=succeeded ok=8 fail=0"
+    },
+    {
+      "ts": "2026-10-05T11:08:49+0800",
+      "event": "run_done",
+      "detail": "P12_fmnist_L4000_s42=succeeded ok=9 fail=0"
+    },
+    {
+      "ts": "2026-10-05T11:12:16+0800",
+      "event": "run_done",
+      "detail": "P13_detseed_L0_s2048=succeeded ok=10 fail=0"
+    },
+    {
+      "ts": "2026-10-05T11:15:44+0800",
+      "event": "run_done",
+      "detail": "P13_detseed_L0_s3003=succeeded ok=11 fail=0"
+    },
+    {
+      "ts": "2026-10-05T11:19:10+0800",
+      "event": "run_done",
+      "detail": "P13_detseed_L0_s4096=succeeded ok=12 fail=0"
+    },
+    {
+      "ts": "2026-10-05T11:22:39+0800",
+      "event": "run_done",
+      "detail": "P13_detseed_L0_s5005=succeeded ok=13 fail=0"
+    },
+    {
+      "ts": "2026-10-05T11:26:10+0800",
+      "event": "run_done",
+      "detail": "P13_detseed_L0_s6006=succeeded ok=14 fail=0"
+    },
+    {
+      "ts": "2026-10-05T11:26:10+0800",
+      "event": "batch_end",
+      "detail": "ok=14 fail=0 blocked=0"
+    },
+    {
+      "ts": "2026-10-05T14:05:56+0800",
+      "event": "batch_start",
+      "detail": "blocks=['P14-headreset'] n=5 shard=0/1"
+    },
+    {
+      "ts": "2026-10-05T14:06:57+0800",
+      "event": "run_done",
+      "detail": "P14_headreset_s42=succeeded ok=1 fail=0"
+    },
+    {
+      "ts": "2026-10-05T14:07:57+0800",
+      "event": "run_done",
+      "detail": "P14_headreset_s123=succeeded ok=2 fail=0"
+    },
+    {
+      "ts": "2026-10-05T14:08:58+0800",
+      "event": "run_done",
+      "detail": "P14_headreset_s456=succeeded ok=3 fail=0"
+    },
+    {
+      "ts": "2026-10-05T14:09:58+0800",
+      "event": "run_done",
+      "detail": "P14_headreset_s789=succeeded ok=4 fail=0"
+    },
+    {
+      "ts": "2026-10-05T14:10:59+0800",
+      "event": "run_done",
+      "detail": "P14_headreset_s1024=succeeded ok=5 fail=0"
+    },
+    {
+      "ts": "2026-10-05T14:10:59+0800",
+      "event": "batch_end",
+      "detail": "ok=5 fail=0 blocked=0"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "run_id": "P2_direct_s42",
+  "block": "P2-controls",
+  "mode": "direct",
+  "seed": 42,
+  "L": 0,
+  "shared": "high",
+  "status": "succeeded",
+  "params": {
+    "features": 93248,
+    "head": 20490,
+    "total": 113738
+  },
+  "tasks": {
+    "old": null,
+    "new": {
+      "name": "cifar10_new",
+      "kind": "image",
+      "n_train": 5000,
+      "n_test": 2500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 10,
+      "train_per_class": [
+        1000,
+        1000,
+        1000,
+        1000,
+        1000
+      ],
+      "test_per_class": [
+        500,
+        500,
+        500,
+        500,
+        500
+      ]
+    }
+  },
+  "loss_C": 0.9048842468708753,
+  "freeze_features_C": false,
+  "final": {
+    "n_points": 80,
+    "new_task_acc": 0.6935999989509583,
+    "new_task_NLL": 0.841847836971283,
+    "W2_norm": 5.094188213348389,
+    "end_C_new_task_acc": 0.6935999989509583,
+    "end_C_new_task_NLL": 0.841847836971283,
+    "end_C_acc_new_probe": 0.6416015625
+  },
+  "error": null,
+  "wall_s": 42.98,
+  "rss_peak_mb": 1924.0,
+  "gpu_peak_mb": 555.4,
+  "device": "cuda"
+}

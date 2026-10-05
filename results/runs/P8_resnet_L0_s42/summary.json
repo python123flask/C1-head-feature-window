@@ -1,0 +1,107 @@
+{
+  "run_id": "P8_resnet_L0_s42",
+  "block": "P8-resnet",
+  "mode": "main",
+  "seed": 42,
+  "L": 0,
+  "shared": "high",
+  "status": "succeeded",
+  "params": {
+    "features": 11176512,
+    "head": 5130,
+    "total": 11181642
+  },
+  "tasks": {
+    "old": {
+      "name": "cifar10_old",
+      "kind": "image",
+      "n_train": 5000,
+      "n_test": 2500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 10,
+      "train_per_class": [
+        1000,
+        1000,
+        0,
+        0,
+        0,
+        0,
+        1000,
+        0,
+        1000,
+        1000
+      ],
+      "test_per_class": [
+        500,
+        500,
+        0,
+        0,
+        0,
+        0,
+        500,
+        0,
+        500,
+        500
+      ]
+    },
+    "new": {
+      "name": "cifar10_new",
+      "kind": "image",
+      "n_train": 5000,
+      "n_test": 2500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 10,
+      "train_per_class": [
+        1000,
+        1000,
+        1000,
+        1000,
+        1000
+      ],
+      "test_per_class": [
+        500,
+        500,
+        500,
+        500,
+        500
+      ]
+    }
+  },
+  "loss_A": 0.2127635131109506,
+  "loss_C": 0.49763662410899995,
+  "freeze_features_C": false,
+  "final": {
+    "n_points": 280,
+    "acc_old_cur": 0.13319998979568481,
+    "acc_old_probe": 0.65966796875,
+    "new_task_acc": 0.7107999920845032,
+    "new_task_NLL": 1.131716251373291,
+    "W2_norm": 4.374699115753174,
+    "feat_drift": 0.6132664680480957,
+    "end_C_new_task_acc": 0.7107999920845032,
+    "end_C_new_task_NLL": 1.131716251373291,
+    "end_C_acc_new_probe": 0.69970703125,
+    "end_C_acc_old_probe": 0.65966796875,
+    "end_A_acc": 0.8527999520301819,
+    "end_A_probe": 0.8671875
+  },
+  "error": null,
+  "wall_s": 161.06,
+  "rss_peak_mb": 2075.1,
+  "gpu_peak_mb": 624.2,
+  "device": "cuda"
+}

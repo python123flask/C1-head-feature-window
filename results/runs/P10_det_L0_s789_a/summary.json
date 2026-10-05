@@ -1,0 +1,107 @@
+{
+  "run_id": "P10_det_L0_s789_a",
+  "block": "P10-det",
+  "mode": "main",
+  "seed": 789,
+  "L": 0,
+  "shared": "high",
+  "status": "succeeded",
+  "params": {
+    "features": 93248,
+    "head": 20490,
+    "total": 113738
+  },
+  "tasks": {
+    "old": {
+      "name": "cifar10_old",
+      "kind": "image",
+      "n_train": 5000,
+      "n_test": 2500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 10,
+      "train_per_class": [
+        1000,
+        1000,
+        0,
+        0,
+        0,
+        0,
+        1000,
+        0,
+        1000,
+        1000
+      ],
+      "test_per_class": [
+        500,
+        500,
+        0,
+        0,
+        0,
+        0,
+        500,
+        0,
+        500,
+        500
+      ]
+    },
+    "new": {
+      "name": "cifar10_new",
+      "kind": "image",
+      "n_train": 5000,
+      "n_test": 2500,
+      "num_classes": 5,
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "head_dim": 10,
+      "train_per_class": [
+        1000,
+        1000,
+        1000,
+        1000,
+        1000
+      ],
+      "test_per_class": [
+        500,
+        500,
+        500,
+        500,
+        500
+      ]
+    }
+  },
+  "loss_A": 0.3069285137619823,
+  "loss_C": 0.7507082457989455,
+  "freeze_features_C": false,
+  "final": {
+    "n_points": 280,
+    "acc_old_cur": 0.1703999936580658,
+    "acc_old_probe": 0.7744140625,
+    "new_task_acc": 0.712399959564209,
+    "new_task_NLL": 0.8601418733596802,
+    "W2_norm": 8.596898078918457,
+    "feat_drift": 0.5122032165527344,
+    "end_C_new_task_acc": 0.712399959564209,
+    "end_C_new_task_NLL": 0.8601418733596802,
+    "end_C_acc_new_probe": 0.6259765625,
+    "end_C_acc_old_probe": 0.7744140625,
+    "end_A_acc": 0.8883999586105347,
+    "end_A_probe": 0.84716796875
+  },
+  "error": null,
+  "wall_s": 209.84,
+  "rss_peak_mb": 2172.7,
+  "gpu_peak_mb": 782.1,
+  "device": "cuda"
+}
