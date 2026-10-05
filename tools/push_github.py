@@ -15,6 +15,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -112,27 +113,97 @@ def main():
     else:
         sys.exit(f"repo lookup failed (HTTP {rc}): {body.get('message')}")
 
-    # 5) 推送（认证用一次性 header，不写进 .git/config）
+    # 5) 推送：先试 git push（重试），失败则回退到 GitHub Data API（api.github.com 可达）
     remote = f"https://github.com/{login}/{repo}.git"
     run(["git", "remote", "remove", "origin"])
     run(["git", "remote", "add", "origin", remote])
     cred = base64.b64encode(f"x-access-token:{_token}".encode()).decode()
-    rc, out = run(["git", "-c",
-                   f"http.https://github.com/.extraHeader=Authorization: Basic {cred}",
-                   "push", "-u", "origin", "main"])
-    print("[push]", out.strip()[-500:])
-    if rc != 0:
-        sys.exit("push failed")
+
+    pushed = False
+    for attempt in range(1, 4):
+        rc, out = run(["git", "-c",
+                       f"http.https://github.com/.extraHeader=Authorization: Basic {cred}",
+                       "-c", "http.version=HTTP/1.1",
+                       "push", "-u", "origin", "main"])
+        print(f"[push try {attempt}]", out.strip()[-300:])
+        if rc == 0:
+            pushed = True
+            break
+        time.sleep(10 * attempt)
+
+    if not pushed:
+        print("[fallback] git 端点不可达，改用 GitHub Data API 批量上传……")
+        pushed = api_upload(login, repo, staged)
+
+    if not pushed:
+        sys.exit("push failed (both git and API)")
 
     # 6) 校验 + 确认 config 无凭据
     rc, body = api("GET", f"/repos/{login}/{repo}")
     cfg = (ROOT / ".git" / "config").read_text(encoding="utf-8")
     assert _token not in cfg, "token leaked into .git/config!"
+    rc2, tree = api("GET", f"/repos/{login}/{repo}/git/trees/HEAD?recursive=1")
+    n_tracked = len([t for t in tree.get("tree", []) if t.get("type") == "blob"]) if rc2 == 200 else -1
     print(f"[ok] default_branch={body.get('default_branch')} "
-          f"size={body.get('size')}KB private={body.get('private')}")
+          f"size={body.get('size')}KB private={body.get('private')} "
+          f"blobs_in_tree={n_tracked} (local staged={len(staged)})")
     print(f"[ok] url: https://github.com/{login}/{repo}")
     print("[action required] push 用的 Personal Access Token 已出现在对话中，"
           "请立即到 GitHub → Settings → Developer settings → Tokens 删除/吊销它。")
+
+
+def api_upload(login: str, repo: str, files: list[str]) -> bool:
+    """空仓库：逐文件建 blob → 一次建 tree → 一次 commit → 更新 ref。"""
+    base64_kw = dict(ensure_ascii=False)
+    shas: dict = {}
+    n = len(files)
+    for i, rel in enumerate(files, 1):
+        p = ROOT / rel
+        if not p.is_file():
+            continue
+        content = base64.b64encode(p.read_bytes()).decode()
+        ok = False
+        for attempt in range(3):
+            rc, body = api("POST", f"/repos/{login}/{repo}/git/blobs",
+                           {"content": content, "encoding": "base64"})
+            if rc in (201, 200):
+                shas[rel] = body["sha"]
+                ok = True
+                break
+            time.sleep(1.5 * (attempt + 1))
+        if not ok:
+            print(f"[blob FAIL] {rel} (HTTP {rc}: {body.get('message')})")
+            return False
+        if i % 100 == 0 or i == n:
+            print(f"  blobs {i}/{n}", flush=True)
+
+    tree = [{"path": rel, "mode": "1000644", "type": "blob", "sha": shas[rel]}
+            for rel in files if rel in shas]
+    rc, body = api("POST", f"/repos/{login}/{repo}/git/trees", {"tree": tree})
+    if rc != 201:
+        print(f"[tree FAIL] HTTP {rc}: {body.get('message')}")
+        return False
+    tree_sha = body["sha"]
+
+    rc, body = api("POST", f"/repos/{login}/{repo}/git/commits", {
+        "message": "Pre-registered pilot: head/feature timescale separation under "
+                   "uniform label exposure (207 runs + gates + figures + manuscript)",
+        "tree": tree_sha, "parents": []})
+    if rc != 201:
+        print(f"[commit FAIL] HTTP {rc}: {body.get('message')}")
+        return False
+    commit_sha = body["sha"]
+
+    rc, body = api("POST", f"/repos/{login}/{repo}/git/refs",
+                   {"ref": "refs/heads/main", "sha": commit_sha})
+    if rc == 422:   # 分支已存在（如部分推送过）→ 强制移动
+        rc, body = api("PATCH", f"/repos/{login}/{repo}/git/refs/heads/main",
+                       {"sha": commit_sha, "force": True})
+    if rc not in (201, 200):
+        print(f"[ref FAIL] HTTP {rc}: {body.get('message')}")
+        return False
+    print(f"[api] committed {len(tree)} files -> {commit_sha[:10]}")
+    return True
 
 
 if __name__ == "__main__":
